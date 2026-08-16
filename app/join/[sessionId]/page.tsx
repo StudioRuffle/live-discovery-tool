@@ -32,7 +32,13 @@ export default async function JoinPage({
     .from("exercises")
     .select("*")
     .eq("session_id", sessionId)
-    .in("type", ["values_tension", "word_choice", "keep_cut", "visual_reaction"])
+    .in("type", [
+      "values_tension",
+      "word_choice",
+      "keep_cut",
+      "visual_reaction",
+      "perceptual_map",
+    ])
     .order("position", { ascending: true });
 
   if (error) throw new Error(error.message);

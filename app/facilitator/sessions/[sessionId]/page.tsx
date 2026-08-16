@@ -5,6 +5,7 @@ import { generateQrSvg } from "@/lib/qr";
 import { getSiteUrl } from "@/lib/site-url";
 import type { Exercise } from "@/lib/types";
 import { PairExerciseForm } from "./pair-exercise-form";
+import { PerceptualMapForm } from "./perceptual-map-form";
 import { createKeepCutExercise, createVisualReactionExercise } from "../../actions";
 
 export default async function SessionPage({
@@ -135,6 +136,10 @@ export default async function SessionPage({
             Add exercise
           </button>
         </form>
+      </section>
+
+      <section className="rounded-lg border p-6">
+        <PerceptualMapForm sessionId={sessionId} />
       </section>
     </main>
   );

@@ -5,7 +5,13 @@ import { redirect } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isFacilitatorAuthed } from "@/lib/facilitator-auth";
 import type { SupabaseClient } from "@supabase/supabase-js";
-import type { ExerciseType, ImageItem, Pair, VisualReactionConfig } from "@/lib/types";
+import type {
+  Competitor,
+  ExerciseType,
+  ImageItem,
+  Pair,
+  VisualReactionConfig,
+} from "@/lib/types";
 
 const VISUAL_REACTION_BUCKET = "visual-reaction";
 
@@ -159,6 +165,42 @@ export async function createVisualReactionExercise(formData: FormData) {
     type: "visual_reaction",
     position: nextPosition,
     config: { images: [] },
+  });
+  if (error) throw new Error(error.message);
+
+  revalidatePath(`/facilitator/sessions/${sessionId}`);
+}
+
+export async function createPerceptualMapExercise(formData: FormData) {
+  await requireFacilitator();
+  const sessionId = String(formData.get("session_id") ?? "");
+  const xLeft = String(formData.get("x_left") ?? "").trim();
+  const xRight = String(formData.get("x_right") ?? "").trim();
+  const yBottom = String(formData.get("y_bottom") ?? "").trim();
+  const yTop = String(formData.get("y_top") ?? "").trim();
+  const names = (formData.getAll("competitor_name") as string[])
+    .map((n) => n.trim())
+    .filter(Boolean);
+
+  if (!sessionId || !xLeft || !xRight || !yBottom || !yTop || names.length === 0) return;
+
+  const competitors: Competitor[] = names.map((name) => ({
+    id: crypto.randomUUID(),
+    name,
+  }));
+
+  const supabase = createAdminClient();
+  const nextPosition = await nextExercisePosition(supabase, sessionId);
+
+  const { error } = await supabase.from("exercises").insert({
+    session_id: sessionId,
+    type: "perceptual_map",
+    position: nextPosition,
+    config: {
+      xAxis: { left: xLeft, right: xRight },
+      yAxis: { bottom: yBottom, top: yTop },
+      competitors,
+    },
   });
   if (error) throw new Error(error.message);
 

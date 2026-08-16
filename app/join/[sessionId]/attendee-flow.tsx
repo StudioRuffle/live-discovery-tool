@@ -8,6 +8,8 @@ import {
   type Exercise,
   type Pair,
   type PairExerciseConfig,
+  type PerceptualMapConfig,
+  type Placement,
   type VisualReactionConfig,
 } from "@/lib/types";
 
@@ -96,6 +98,10 @@ export function AttendeeFlow({
   const [cutText, setCutText] = useState("");
   const [reaction, setReaction] = useState<"up" | "down" | null>(null);
   const [imageNote, setImageNote] = useState("");
+  const [mapPlacements, setMapPlacements] = useState<Record<string, { x: number; y: number }>>(
+    {}
+  );
+  const [activeCompetitorId, setActiveCompetitorId] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
@@ -254,6 +260,38 @@ export function AttendeeFlow({
     }
   }
 
+  async function handleMapSubmit() {
+    if (!attendee || !currentExercise) return;
+    const config = currentExercise.config as PerceptualMapConfig;
+    if (config.competitors.some((c) => !mapPlacements[c.id])) return;
+
+    setSubmitting(true);
+    setSubmitError(null);
+
+    const placements: Placement[] = config.competitors.map((c) => ({
+      competitorId: c.id,
+      x: mapPlacements[c.id].x,
+      y: mapPlacements[c.id].y,
+    }));
+
+    try {
+      await submitWithRetry(supabase, "responses", {
+        exercise_id: currentExercise.id,
+        attendee_id: attendee.id,
+        payload: { placements },
+      });
+
+      recordSubmission(currentExercise.id, SINGLE_SUBMISSION_ITEM_ID);
+      setMapPlacements({});
+      setActiveCompetitorId(null);
+      setJustFinishedExerciseId(currentExercise.id);
+    } catch {
+      setSubmitError("Couldn't submit — check your connection and try again.");
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
   if (attendee === undefined) return null;
 
   if (!attendee) {
@@ -309,6 +347,20 @@ export function AttendeeFlow({
       return (
         <main className="flex min-h-screen flex-col items-center justify-center gap-6 p-8 text-center">
           <h1 className="text-2xl font-bold">Thanks for reacting!</h1>
+          <button
+            onClick={() => setJustFinishedExerciseId(null)}
+            className="rounded bg-black px-6 py-3 text-lg font-semibold text-white"
+          >
+            {hasMore ? "Continue" : "Done"}
+          </button>
+        </main>
+      );
+    }
+
+    if (justFinishedExercise.type === "perceptual_map") {
+      return (
+        <main className="flex min-h-screen flex-col items-center justify-center gap-6 p-8 text-center">
+          <h1 className="text-2xl font-bold">Thanks — placements recorded</h1>
           <button
             onClick={() => setJustFinishedExerciseId(null)}
             className="rounded bg-black px-6 py-3 text-lg font-semibold text-white"
@@ -456,6 +508,107 @@ export function AttendeeFlow({
                 </p>
               )}
             </div>
+          )}
+        </div>
+      </main>
+    );
+  }
+
+  if (currentExercise.type === "perceptual_map") {
+    const config = currentExercise.config as PerceptualMapConfig;
+    const allPlaced = config.competitors.every((c) => mapPlacements[c.id]);
+    const activeName = config.competitors.find((c) => c.id === activeCompetitorId)?.name;
+
+    function handleGridClick(e: React.MouseEvent<HTMLDivElement>) {
+      if (!activeCompetitorId) return;
+      const rect = e.currentTarget.getBoundingClientRect();
+      const x = Math.min(1, Math.max(0, (e.clientX - rect.left) / rect.width));
+      const y = Math.min(1, Math.max(0, 1 - (e.clientY - rect.top) / rect.height));
+      setMapPlacements((prev) => {
+        const next = { ...prev, [activeCompetitorId]: { x, y } };
+        const nextUnplaced = config.competitors.find((c) => !next[c.id]);
+        setActiveCompetitorId(nextUnplaced ? nextUnplaced.id : null);
+        return next;
+      });
+    }
+
+    return (
+      <main className="flex min-h-screen flex-col items-center justify-center gap-3 p-6">
+        <div className="flex w-full max-w-md flex-col gap-2">
+          <div className="text-center text-sm font-semibold text-gray-500">
+            {config.yAxis.top}
+          </div>
+          <div className="flex items-stretch gap-2">
+            <div className="flex items-center rotate-180 text-sm font-semibold text-gray-500 [writing-mode:vertical-rl]">
+              {config.xAxis.left}
+            </div>
+            <div
+              onClick={handleGridClick}
+              className="relative aspect-square flex-1 rounded-lg border-2 border-gray-200 bg-gray-50"
+            >
+              {config.competitors.map((c) => {
+                const p = mapPlacements[c.id];
+                if (!p) return null;
+                return (
+                  <div
+                    key={c.id}
+                    className="absolute flex h-7 w-7 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-black text-xs font-bold text-white"
+                    style={{ left: `${p.x * 100}%`, top: `${(1 - p.y) * 100}%` }}
+                  >
+                    {c.name.slice(0, 1).toUpperCase()}
+                  </div>
+                );
+              })}
+            </div>
+            <div className="flex items-center text-sm font-semibold text-gray-500 [writing-mode:vertical-rl]">
+              {config.xAxis.right}
+            </div>
+          </div>
+          <div className="text-center text-sm font-semibold text-gray-500">
+            {config.yAxis.bottom}
+          </div>
+
+          <div className="mt-2 flex flex-wrap justify-center gap-2">
+            {config.competitors.map((c) => (
+              <button
+                key={c.id}
+                onClick={() => setActiveCompetitorId(c.id)}
+                className={`rounded-full border-2 px-4 py-2 text-sm font-semibold ${
+                  activeCompetitorId === c.id
+                    ? "border-black bg-black text-white"
+                    : mapPlacements[c.id]
+                      ? "border-green-500 text-green-600"
+                      : "border-gray-300"
+                }`}
+              >
+                {mapPlacements[c.id] ? "✓ " : ""}
+                {c.name}
+              </button>
+            ))}
+          </div>
+
+          <p className="text-center text-sm text-gray-500">
+            {activeCompetitorId
+              ? `Tap the grid to place ${activeName}.`
+              : allPlaced
+                ? "All placed — submit when ready."
+                : "Tap a competitor, then tap the grid to place it."}
+          </p>
+
+          <button
+            onClick={handleMapSubmit}
+            disabled={submitting || !allPlaced}
+            className="rounded bg-black px-4 py-4 text-xl font-semibold text-white disabled:opacity-50"
+          >
+            {submitting ? "Submitting…" : "Submit"}
+          </button>
+          {submitError && (
+            <p className="text-sm text-red-600">
+              {submitError}{" "}
+              <button onClick={handleMapSubmit} className="underline">
+                Retry
+              </button>
+            </p>
           )}
         </div>
       </main>

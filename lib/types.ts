@@ -54,6 +54,27 @@ export interface VisualReactionResponsePayload {
   note?: string;
 }
 
+export interface Competitor {
+  id: string;
+  name: string;
+}
+
+export interface PerceptualMapConfig {
+  xAxis: { left: string; right: string };
+  yAxis: { bottom: string; top: string };
+  competitors: Competitor[];
+}
+
+export interface Placement {
+  competitorId: string;
+  x: number; // 0..1, normalized within xAxis bounds
+  y: number; // 0..1, normalized within yAxis bounds
+}
+
+export interface PerceptualMapResponsePayload {
+  placements: Placement[];
+}
+
 export interface Client {
   id: string;
   name: string;

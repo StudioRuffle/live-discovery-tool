@@ -1,10 +1,16 @@
 import { notFound } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { isPairExerciseType, type PairExerciseConfig, type VisualReactionConfig } from "@/lib/types";
+import {
+  isPairExerciseType,
+  type PairExerciseConfig,
+  type PerceptualMapConfig,
+  type VisualReactionConfig,
+} from "@/lib/types";
 import { ResultsPanel } from "./results-panel";
 import { KeepCutPanel } from "./keep-cut-panel";
 import { ImageManager } from "./image-manager";
 import { VisualReactionPanel } from "./visual-reaction-panel";
+import { PerceptualMapPanel } from "./perceptual-map-panel";
 
 export default async function ExerciseResultsPage({
   params,
@@ -46,6 +52,11 @@ export default async function ExerciseResultsPage({
         />
       ) : exercise.type === "keep_cut" ? (
         <KeepCutPanel exerciseId={exerciseId} />
+      ) : exercise.type === "perceptual_map" ? (
+        <PerceptualMapPanel
+          exerciseId={exerciseId}
+          config={exercise.config as PerceptualMapConfig}
+        />
       ) : (
         <p className="text-gray-500">
           Results view for &quot;{exercise.type}&quot; isn&apos;t built yet.
