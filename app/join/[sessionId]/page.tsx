@@ -28,13 +28,14 @@ export default async function JoinPage({
     );
   }
 
-  // Phase 2 only supports values_tension; word_choice joins this list in
-  // Phase 3 as the shared pair-answering component picks it up too.
+  // Every forced-choice-pair exercise type shares the same config/payload
+  // shape (see docs/responses-payload-shapes.md), so AttendeeFlow handles
+  // all of them with zero type-specific branching.
   const { data: exercises, error } = await supabase
     .from("exercises")
     .select("*")
     .eq("session_id", sessionId)
-    .in("type", ["values_tension"])
+    .in("type", ["values_tension", "word_choice"])
     .order("position", { ascending: true });
 
   if (error) throw new Error(error.message);

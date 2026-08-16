@@ -3,7 +3,9 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
-import type { Pair } from "@/lib/types";
+import type { ExerciseType, Pair } from "@/lib/types";
+
+const PAIR_EXERCISE_TYPES: ExerciseType[] = ["values_tension", "word_choice"];
 
 // Named createClientRecord, not createClient, to avoid colliding with the
 // Supabase client factories of the same name imported elsewhere in the app.
@@ -46,10 +48,16 @@ export async function closeSession(formData: FormData) {
   revalidatePath(`/facilitator/sessions/${sessionId}`);
 }
 
-export async function createValuesTensionExercise(formData: FormData) {
+// Shared by every forced-choice-pair exercise type (values_tension,
+// word_choice, ...) - only the type and the copy around the form differ,
+// see PairExerciseForm.
+export async function createPairExercise(formData: FormData) {
   const sessionId = String(formData.get("session_id") ?? "");
+  const type = String(formData.get("type") ?? "") as ExerciseType;
   const lefts = formData.getAll("pair_left") as string[];
   const rights = formData.getAll("pair_right") as string[];
+
+  if (!PAIR_EXERCISE_TYPES.includes(type)) return;
 
   const pairs: Pair[] = lefts
     .map((left, i) => ({
@@ -75,7 +83,7 @@ export async function createValuesTensionExercise(formData: FormData) {
 
   const { error } = await supabase.from("exercises").insert({
     session_id: sessionId,
-    type: "values_tension",
+    type,
     position: nextPosition,
     config: { pairs },
   });

@@ -1,24 +1,38 @@
 "use client";
 
 import { useState } from "react";
-import { createValuesTensionExercise } from "../../actions";
+import { createPairExercise } from "../../actions";
+import type { ExerciseType } from "@/lib/types";
 
-export function PairsForm({ sessionId }: { sessionId: string }) {
+// One shared form for every forced-choice-pair exercise type - only the
+// type and placeholder copy differ per instance (see session page).
+export function PairExerciseForm({
+  sessionId,
+  type,
+  title,
+  leftPlaceholder,
+  rightPlaceholder,
+}: {
+  sessionId: string;
+  type: ExerciseType;
+  title: string;
+  leftPlaceholder: string;
+  rightPlaceholder: string;
+}) {
   const [rows, setRows] = useState([0]);
 
   return (
-    <form action={createValuesTensionExercise} className="flex flex-col gap-3">
+    <form action={createPairExercise} className="flex flex-col gap-3">
       <input type="hidden" name="session_id" value={sessionId} />
-      <p className="text-sm font-semibold text-gray-600">
-        Values in Tension — word pairs
-      </p>
+      <input type="hidden" name="type" value={type} />
+      <p className="text-sm font-semibold text-gray-600">{title}</p>
 
       {rows.map((row) => (
         <div key={row} className="flex items-center gap-2">
           <input
             type="text"
             name="pair_left"
-            placeholder="Speed"
+            placeholder={leftPlaceholder}
             required
             className="flex-1 rounded border px-3 py-2"
           />
@@ -26,7 +40,7 @@ export function PairsForm({ sessionId }: { sessionId: string }) {
           <input
             type="text"
             name="pair_right"
-            placeholder="Craft"
+            placeholder={rightPlaceholder}
             required
             className="flex-1 rounded border px-3 py-2"
           />

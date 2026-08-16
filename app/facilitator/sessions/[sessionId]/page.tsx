@@ -4,7 +4,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { generateQrSvg } from "@/lib/qr";
 import { getSiteUrl } from "@/lib/site-url";
 import type { Exercise } from "@/lib/types";
-import { PairsForm } from "./pairs-form";
+import { PairExerciseForm } from "./pair-exercise-form";
 
 export default async function SessionPage({
   params,
@@ -80,8 +80,25 @@ export default async function SessionPage({
         </ul>
       </section>
 
-      <section className="rounded-lg border p-6">
-        <PairsForm sessionId={sessionId} />
+      <section className="flex flex-col gap-6 rounded-lg border p-6 sm:flex-row">
+        <div className="flex-1">
+          <PairExerciseForm
+            sessionId={sessionId}
+            type="values_tension"
+            title="Values in Tension — word pairs"
+            leftPlaceholder="Speed"
+            rightPlaceholder="Craft"
+          />
+        </div>
+        <div className="flex-1">
+          <PairExerciseForm
+            sessionId={sessionId}
+            type="word_choice"
+            title="Word Choice — descriptive words"
+            leftPlaceholder="Modern"
+            rightPlaceholder="Timeless"
+          />
+        </div>
       </section>
     </main>
   );
