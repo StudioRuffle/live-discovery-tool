@@ -5,7 +5,7 @@ import { generateQrSvg } from "@/lib/qr";
 import { getSiteUrl } from "@/lib/site-url";
 import type { Exercise } from "@/lib/types";
 import { PairExerciseForm } from "./pair-exercise-form";
-import { createKeepCutExercise } from "../../actions";
+import { createKeepCutExercise, createVisualReactionExercise } from "../../actions";
 
 export default async function SessionPage({
   params,
@@ -110,6 +110,23 @@ export default async function SessionPage({
             No setup needed — attendees answer &quot;one thing you couldn&apos;t
             lose&quot; and &quot;one thing that needs to go&quot;, hidden until
             you reveal.
+          </p>
+          <button
+            type="submit"
+            className="self-start rounded bg-black px-4 py-2 font-semibold text-white"
+          >
+            Add exercise
+          </button>
+        </form>
+      </section>
+
+      <section className="rounded-lg border p-6">
+        <form action={createVisualReactionExercise} className="flex flex-col gap-3">
+          <input type="hidden" name="session_id" value={sessionId} />
+          <p className="text-sm font-semibold text-gray-600">Visual Reaction</p>
+          <p className="text-sm text-gray-500">
+            Creates the exercise — upload reference images afterward from its
+            results page.
           </p>
           <button
             type="submit"

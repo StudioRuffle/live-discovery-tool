@@ -3,7 +3,13 @@
 import { useEffect, useMemo, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { submitWithRetry } from "@/lib/submit-with-retry";
-import { isPairExerciseType, type Exercise, type Pair, type PairExerciseConfig } from "@/lib/types";
+import {
+  isPairExerciseType,
+  type Exercise,
+  type Pair,
+  type PairExerciseConfig,
+  type VisualReactionConfig,
+} from "@/lib/types";
 
 interface StoredAttendee {
   id: string;
@@ -53,6 +59,10 @@ function isExerciseDone(exercise: Exercise, progress: Progress): boolean {
     const config = exercise.config as PairExerciseConfig;
     return submitted.length >= config.pairs.length;
   }
+  if (exercise.type === "visual_reaction") {
+    const config = exercise.config as VisualReactionConfig;
+    return submitted.length >= config.images.length;
+  }
   // keep_cut and any other single-submission type
   return submitted.includes(SINGLE_SUBMISSION_ITEM_ID);
 }
@@ -84,6 +94,8 @@ export function AttendeeFlow({
   const [note, setNote] = useState("");
   const [keepText, setKeepText] = useState("");
   const [cutText, setCutText] = useState("");
+  const [reaction, setReaction] = useState<"up" | "down" | null>(null);
+  const [imageNote, setImageNote] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
@@ -132,6 +144,13 @@ export function AttendeeFlow({
     const config = currentExercise.config as PairExerciseConfig;
     const submitted = progress[currentExercise.id] ?? [];
     return config.pairs.find((p) => !submitted.includes(p.id)) ?? null;
+  }, [currentExercise, progress]);
+
+  const currentImage = useMemo(() => {
+    if (!currentExercise || currentExercise.type !== "visual_reaction") return null;
+    const config = currentExercise.config as VisualReactionConfig;
+    const submitted = progress[currentExercise.id] ?? [];
+    return config.images.find((img) => !submitted.includes(img.id)) ?? null;
   }, [currentExercise, progress]);
 
   function recordSubmission(exerciseId: string, itemId: string) {
@@ -203,6 +222,38 @@ export function AttendeeFlow({
     }
   }
 
+  async function handleImageSubmit() {
+    if (!attendee || !currentExercise || !currentImage || !reaction) return;
+
+    setSubmitting(true);
+    setSubmitError(null);
+
+    try {
+      await submitWithRetry(supabase, "responses", {
+        exercise_id: currentExercise.id,
+        attendee_id: attendee.id,
+        payload: {
+          imageId: currentImage.id,
+          reaction,
+          ...(imageNote.trim() ? { note: imageNote.trim() } : {}),
+        },
+      });
+
+      const next = recordSubmission(currentExercise.id, currentImage.id);
+      setReaction(null);
+      setImageNote("");
+
+      const config = currentExercise.config as VisualReactionConfig;
+      if (next[currentExercise.id].length >= config.images.length) {
+        setJustFinishedExerciseId(currentExercise.id);
+      }
+    } catch {
+      setSubmitError("Couldn't submit — check your connection and try again.");
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
   if (attendee === undefined) return null;
 
   if (!attendee) {
@@ -244,6 +295,20 @@ export function AttendeeFlow({
           <p className="text-gray-500">
             Your answer stays private until the facilitator reveals results.
           </p>
+          <button
+            onClick={() => setJustFinishedExerciseId(null)}
+            className="rounded bg-black px-6 py-3 text-lg font-semibold text-white"
+          >
+            {hasMore ? "Continue" : "Done"}
+          </button>
+        </main>
+      );
+    }
+
+    if (justFinishedExercise.type === "visual_reaction") {
+      return (
+        <main className="flex min-h-screen flex-col items-center justify-center gap-6 p-8 text-center">
+          <h1 className="text-2xl font-bold">Thanks for reacting!</h1>
           <button
             onClick={() => setJustFinishedExerciseId(null)}
             className="rounded bg-black px-6 py-3 text-lg font-semibold text-white"
@@ -330,6 +395,67 @@ export function AttendeeFlow({
                 Retry
               </button>
             </p>
+          )}
+        </div>
+      </main>
+    );
+  }
+
+  if (currentExercise.type === "visual_reaction" && currentImage) {
+    return (
+      <main className="flex min-h-screen flex-col items-center justify-center gap-6 p-6">
+        <div className="flex w-full max-w-md flex-col gap-4">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={currentImage.url}
+            alt=""
+            className="aspect-square w-full rounded-xl object-cover"
+          />
+          <div className="grid grid-cols-2 gap-3">
+            <button
+              onClick={() => setReaction("up")}
+              className={`rounded-xl border-4 py-6 text-4xl transition ${
+                reaction === "up" ? "border-black bg-black" : "border-gray-200"
+              }`}
+            >
+              👍
+            </button>
+            <button
+              onClick={() => setReaction("down")}
+              className={`rounded-xl border-4 py-6 text-4xl transition ${
+                reaction === "down" ? "border-black bg-black" : "border-gray-200"
+              }`}
+            >
+              👎
+            </button>
+          </div>
+
+          {reaction && (
+            <div className="flex flex-col gap-3">
+              <textarea
+                value={imageNote}
+                onChange={(e) => setImageNote(e.target.value)}
+                placeholder="Add a short note (optional)"
+                maxLength={140}
+                rows={2}
+                className="rounded border px-3 py-2"
+              />
+              <button
+                onClick={handleImageSubmit}
+                disabled={submitting}
+                className="rounded bg-black px-4 py-4 text-xl font-semibold text-white disabled:opacity-50"
+              >
+                {submitting ? "Submitting…" : "Submit"}
+              </button>
+              {submitError && (
+                <p className="text-sm text-red-600">
+                  {submitError}{" "}
+                  <button onClick={handleImageSubmit} className="underline">
+                    Retry
+                  </button>
+                </p>
+              )}
+            </div>
           )}
         </div>
       </main>

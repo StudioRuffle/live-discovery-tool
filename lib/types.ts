@@ -35,6 +35,25 @@ export function isPairExerciseType(type: ExerciseType): boolean {
   return type === "values_tension" || type === "word_choice";
 }
 
+export interface ImageItem {
+  id: string;
+  url: string;
+  // Storage object path (bucket-relative), kept alongside the public url so
+  // removal can delete the actual blob without parsing it back out of a URL.
+  path: string;
+  order: number;
+}
+
+export interface VisualReactionConfig {
+  images: ImageItem[];
+}
+
+export interface VisualReactionResponsePayload {
+  imageId: string;
+  reaction: "up" | "down";
+  note?: string;
+}
+
 export interface Client {
   id: string;
   name: string;

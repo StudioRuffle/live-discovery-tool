@@ -1,8 +1,10 @@
 import { notFound } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { isPairExerciseType, type PairExerciseConfig } from "@/lib/types";
+import { isPairExerciseType, type PairExerciseConfig, type VisualReactionConfig } from "@/lib/types";
 import { ResultsPanel } from "./results-panel";
 import { KeepCutPanel } from "./keep-cut-panel";
+import { ImageManager } from "./image-manager";
+import { VisualReactionPanel } from "./visual-reaction-panel";
 
 export default async function ExerciseResultsPage({
   params,
@@ -19,6 +21,21 @@ export default async function ExerciseResultsPage({
     .single();
 
   if (!exercise) notFound();
+
+  if (exercise.type === "visual_reaction") {
+    const images = (exercise.config as VisualReactionConfig).images ?? [];
+    return (
+      <main className="min-h-screen bg-gray-950 p-8 text-white">
+        <div className="mx-auto mb-8 max-w-5xl rounded-lg bg-white p-6 text-black">
+          <h2 className="mb-3 font-semibold">
+            Manage images — reorder or remove before the session starts
+          </h2>
+          <ImageManager exerciseId={exerciseId} images={images} />
+        </div>
+        <VisualReactionPanel exerciseId={exerciseId} images={images} />
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-screen bg-gray-950 p-8 text-white">

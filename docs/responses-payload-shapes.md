@@ -55,11 +55,13 @@ service-role query that selects `id`/`attendee_id` but never `payload` while
 ```json
 {
   "images": [
-    { "id": "img1", "url": "https://.../image.jpg", "order": 0 }
+    { "id": "img1", "url": "https://.../image.jpg", "path": "exerciseId/uuid.jpg", "order": 0 }
   ]
 }
 ```
-`url` points into Supabase Storage (Phase 5).
+`url` is a public Supabase Storage URL (bucket `visual-reaction`). `path`
+is the bucket-relative storage path, kept alongside `url` so removing an
+image can delete the actual blob without reverse-parsing it out of the URL.
 
 **payload** (one row per attendee per image)
 ```json
