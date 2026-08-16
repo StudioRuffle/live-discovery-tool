@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 
+// PostgREST error codes meaning "connected fine, this table just doesn't
+// exist yet" - expected pre-Phase-1, and still proof the connection works.
+const TABLE_NOT_FOUND_CODES = new Set(["42P01", "PGRST205"]);
+
 export async function GET() {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
     return NextResponse.json(
@@ -17,15 +21,12 @@ export async function GET() {
   try {
     const supabase = await createClient();
 
-    // Any real error here is enough to prove connectivity + credentials work;
-    // "table not found" still counts as a successful connection at this phase.
     const { error } = await supabase
       .from("_health_check_placeholder")
       .select("*")
       .limit(1);
 
-    const supabaseReachable =
-      !error || error.code === "42P01" /* undefined_table */;
+    const supabaseReachable = !error || TABLE_NOT_FOUND_CODES.has(error.code ?? "");
 
     return NextResponse.json(
       {
