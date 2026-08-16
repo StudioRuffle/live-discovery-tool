@@ -3,9 +3,24 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import type { ExerciseType, Pair } from "@/lib/types";
 
 const PAIR_EXERCISE_TYPES: ExerciseType[] = ["values_tension", "word_choice"];
+
+async function nextExercisePosition(
+  supabase: SupabaseClient,
+  sessionId: string
+): Promise<number> {
+  const { data, error } = await supabase
+    .from("exercises")
+    .select("position")
+    .eq("session_id", sessionId)
+    .order("position", { ascending: false })
+    .limit(1);
+  if (error) throw new Error(error.message);
+  return (data?.[0]?.position ?? -1) + 1;
+}
 
 // Named createClientRecord, not createClient, to avoid colliding with the
 // Supabase client factories of the same name imported elsewhere in the app.
@@ -70,16 +85,7 @@ export async function createPairExercise(formData: FormData) {
   if (!sessionId || pairs.length === 0) return;
 
   const supabase = createAdminClient();
-
-  const { data: existing, error: countError } = await supabase
-    .from("exercises")
-    .select("position")
-    .eq("session_id", sessionId)
-    .order("position", { ascending: false })
-    .limit(1);
-  if (countError) throw new Error(countError.message);
-
-  const nextPosition = (existing?.[0]?.position ?? -1) + 1;
+  const nextPosition = await nextExercisePosition(supabase, sessionId);
 
   const { error } = await supabase.from("exercises").insert({
     session_id: sessionId,
@@ -90,6 +96,34 @@ export async function createPairExercise(formData: FormData) {
   if (error) throw new Error(error.message);
 
   revalidatePath(`/facilitator/sessions/${sessionId}`);
+}
+
+export async function createKeepCutExercise(formData: FormData) {
+  const sessionId = String(formData.get("session_id") ?? "");
+  if (!sessionId) return;
+
+  const supabase = createAdminClient();
+  const nextPosition = await nextExercisePosition(supabase, sessionId);
+
+  const { error } = await supabase.from("exercises").insert({
+    session_id: sessionId,
+    type: "keep_cut",
+    position: nextPosition,
+    config: {},
+  });
+  if (error) throw new Error(error.message);
+
+  revalidatePath(`/facilitator/sessions/${sessionId}`);
+}
+
+// Flips a keep_cut exercise to revealed. One-way: there is no un-reveal.
+export async function revealExercise(exerciseId: string) {
+  const supabase = createAdminClient();
+  const { error } = await supabase
+    .from("exercises")
+    .update({ reveal_state: "revealed" })
+    .eq("id", exerciseId);
+  if (error) throw new Error(error.message);
 }
 
 export async function goToResults(formData: FormData) {

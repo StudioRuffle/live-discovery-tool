@@ -26,6 +26,15 @@ export interface PairResponsePayload {
   note?: string;
 }
 
+export interface KeepCutResponsePayload {
+  keep: string;
+  cut: string;
+}
+
+export function isPairExerciseType(type: ExerciseType): boolean {
+  return type === "values_tension" || type === "word_choice";
+}
+
 export interface Client {
   id: string;
   name: string;

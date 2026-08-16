@@ -1,7 +1,8 @@
 import { notFound } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
-import type { PairExerciseConfig } from "@/lib/types";
+import { isPairExerciseType, type PairExerciseConfig } from "@/lib/types";
 import { ResultsPanel } from "./results-panel";
+import { KeepCutPanel } from "./keep-cut-panel";
 
 export default async function ExerciseResultsPage({
   params,
@@ -19,11 +20,20 @@ export default async function ExerciseResultsPage({
 
   if (!exercise) notFound();
 
-  const config = exercise.config as PairExerciseConfig;
-
   return (
     <main className="min-h-screen bg-gray-950 p-8 text-white">
-      <ResultsPanel exerciseId={exerciseId} pairs={config.pairs ?? []} />
+      {isPairExerciseType(exercise.type) ? (
+        <ResultsPanel
+          exerciseId={exerciseId}
+          pairs={(exercise.config as PairExerciseConfig).pairs ?? []}
+        />
+      ) : exercise.type === "keep_cut" ? (
+        <KeepCutPanel exerciseId={exerciseId} />
+      ) : (
+        <p className="text-gray-500">
+          Results view for &quot;{exercise.type}&quot; isn&apos;t built yet.
+        </p>
+      )}
     </main>
   );
 }

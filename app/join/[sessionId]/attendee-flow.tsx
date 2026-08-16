@@ -3,14 +3,19 @@
 import { useEffect, useMemo, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { submitWithRetry } from "@/lib/submit-with-retry";
-import type { Exercise, Pair, PairExerciseConfig } from "@/lib/types";
+import { isPairExerciseType, type Exercise, type Pair, type PairExerciseConfig } from "@/lib/types";
 
 interface StoredAttendee {
   id: string;
   name: string;
 }
 
-type Progress = Record<string, string[]>; // exerciseId -> submitted pairIds
+// exerciseId -> submitted item ids. Pair exercises track one id per pair;
+// keep_cut (and any other single-submission exercise) uses "" as its one
+// sentinel item id, matching responses.item_key for a payload with no
+// pairId/imageId (see docs/responses-payload-shapes.md).
+type Progress = Record<string, string[]>;
+const SINGLE_SUBMISSION_ITEM_ID = "";
 
 function attendeeKey(sessionId: string) {
   return `dt_attendee_${sessionId}`;
@@ -42,6 +47,16 @@ function loadProgress(sessionId: string, attendeeId: string): Progress {
   }
 }
 
+function isExerciseDone(exercise: Exercise, progress: Progress): boolean {
+  const submitted = progress[exercise.id] ?? [];
+  if (isPairExerciseType(exercise.type)) {
+    const config = exercise.config as PairExerciseConfig;
+    return submitted.length >= config.pairs.length;
+  }
+  // keep_cut and any other single-submission type
+  return submitted.includes(SINGLE_SUBMISSION_ITEM_ID);
+}
+
 export function AttendeeFlow({
   sessionId,
   sessionName,
@@ -67,6 +82,8 @@ export function AttendeeFlow({
 
   const [selectedSide, setSelectedSide] = useState<"left" | "right" | null>(null);
   const [note, setNote] = useState("");
+  const [keepText, setKeepText] = useState("");
+  const [cutText, setCutText] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
@@ -101,18 +118,33 @@ export function AttendeeFlow({
     }
   }
 
-  const { currentExercise, currentPair, exerciseIndex } = useMemo(() => {
+  const { currentExercise, exerciseIndex } = useMemo(() => {
     for (let i = 0; i < exercises.length; i++) {
-      const ex = exercises[i];
-      const config = ex.config as PairExerciseConfig;
-      const submitted = progress[ex.id] ?? [];
-      const pair = config.pairs.find((p) => !submitted.includes(p.id));
-      if (pair) return { currentExercise: ex, currentPair: pair, exerciseIndex: i };
+      if (!isExerciseDone(exercises[i], progress)) {
+        return { currentExercise: exercises[i], exerciseIndex: i };
+      }
     }
-    return { currentExercise: null, currentPair: null, exerciseIndex: -1 };
+    return { currentExercise: null, exerciseIndex: -1 };
   }, [exercises, progress]);
 
-  async function handleSubmit() {
+  const currentPair = useMemo(() => {
+    if (!currentExercise || !isPairExerciseType(currentExercise.type)) return null;
+    const config = currentExercise.config as PairExerciseConfig;
+    const submitted = progress[currentExercise.id] ?? [];
+    return config.pairs.find((p) => !submitted.includes(p.id)) ?? null;
+  }, [currentExercise, progress]);
+
+  function recordSubmission(exerciseId: string, itemId: string) {
+    const next: Progress = {
+      ...progress,
+      [exerciseId]: [...(progress[exerciseId] ?? []), itemId],
+    };
+    setProgress(next);
+    localStorage.setItem(progressKey(sessionId, attendee!.id), JSON.stringify(next));
+    return next;
+  }
+
+  async function handlePairSubmit() {
     if (!attendee || !currentExercise || !currentPair || !selectedSide) return;
 
     setSubmitting(true);
@@ -129,12 +161,7 @@ export function AttendeeFlow({
         },
       });
 
-      const next: Progress = {
-        ...progress,
-        [currentExercise.id]: [...(progress[currentExercise.id] ?? []), currentPair.id],
-      };
-      setProgress(next);
-      localStorage.setItem(progressKey(sessionId, attendee.id), JSON.stringify(next));
+      const next = recordSubmission(currentExercise.id, currentPair.id);
       setSelectedSide(null);
       setNote("");
 
@@ -142,6 +169,33 @@ export function AttendeeFlow({
       if (next[currentExercise.id].length >= config.pairs.length) {
         setJustFinishedExerciseId(currentExercise.id);
       }
+    } catch {
+      setSubmitError("Couldn't submit — check your connection and try again.");
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  async function handleKeepCutSubmit() {
+    if (!attendee || !currentExercise) return;
+    const keep = keepText.trim();
+    const cut = cutText.trim();
+    if (!keep || !cut) return;
+
+    setSubmitting(true);
+    setSubmitError(null);
+
+    try {
+      await submitWithRetry(supabase, "responses", {
+        exercise_id: currentExercise.id,
+        attendee_id: attendee.id,
+        payload: { keep, cut },
+      });
+
+      recordSubmission(currentExercise.id, SINGLE_SUBMISSION_ITEM_ID);
+      setKeepText("");
+      setCutText("");
+      setJustFinishedExerciseId(currentExercise.id);
     } catch {
       setSubmitError("Couldn't submit — check your connection and try again.");
     } finally {
@@ -181,9 +235,27 @@ export function AttendeeFlow({
 
   const justFinishedExercise = exercises.find((e) => e.id === justFinishedExerciseId);
   if (justFinishedExercise) {
+    const hasMore = exerciseIndex !== -1;
+
+    if (justFinishedExercise.type === "keep_cut") {
+      return (
+        <main className="flex min-h-screen flex-col items-center justify-center gap-6 p-8 text-center">
+          <h1 className="text-2xl font-bold">Thanks — recorded</h1>
+          <p className="text-gray-500">
+            Your answer stays private until the facilitator reveals results.
+          </p>
+          <button
+            onClick={() => setJustFinishedExerciseId(null)}
+            className="rounded bg-black px-6 py-3 text-lg font-semibold text-white"
+          >
+            {hasMore ? "Continue" : "Done"}
+          </button>
+        </main>
+      );
+    }
+
     const config = justFinishedExercise.config as PairExerciseConfig;
     const submittedIds = progress[justFinishedExercise.id] ?? [];
-    const hasMore = exerciseIndex !== -1;
 
     return (
       <main className="flex min-h-screen flex-col items-center gap-6 p-8">
@@ -207,7 +279,7 @@ export function AttendeeFlow({
     );
   }
 
-  if (!currentExercise || !currentPair) {
+  if (!currentExercise) {
     return (
       <main className="flex min-h-screen flex-col items-center justify-center p-8 text-center">
         <h1 className="text-2xl font-bold">You&apos;re all caught up</h1>
@@ -215,6 +287,56 @@ export function AttendeeFlow({
       </main>
     );
   }
+
+  if (currentExercise.type === "keep_cut") {
+    return (
+      <main className="flex min-h-screen flex-col items-center justify-center gap-6 p-6">
+        <div className="flex w-full max-w-md flex-col gap-4">
+          <div>
+            <label className="mb-1 block text-sm font-semibold text-gray-600">
+              One thing you couldn&apos;t lose
+            </label>
+            <textarea
+              value={keepText}
+              onChange={(e) => setKeepText(e.target.value)}
+              maxLength={200}
+              rows={2}
+              className="w-full rounded border px-3 py-2 text-lg"
+            />
+          </div>
+          <div>
+            <label className="mb-1 block text-sm font-semibold text-gray-600">
+              One thing that needs to go
+            </label>
+            <textarea
+              value={cutText}
+              onChange={(e) => setCutText(e.target.value)}
+              maxLength={200}
+              rows={2}
+              className="w-full rounded border px-3 py-2 text-lg"
+            />
+          </div>
+          <button
+            onClick={handleKeepCutSubmit}
+            disabled={submitting || !keepText.trim() || !cutText.trim()}
+            className="rounded bg-black px-4 py-4 text-xl font-semibold text-white disabled:opacity-50"
+          >
+            {submitting ? "Submitting…" : "Submit"}
+          </button>
+          {submitError && (
+            <p className="text-sm text-red-600">
+              {submitError}{" "}
+              <button onClick={handleKeepCutSubmit} className="underline">
+                Retry
+              </button>
+            </p>
+          )}
+        </div>
+      </main>
+    );
+  }
+
+  if (!currentPair) return null;
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center gap-6 p-6">
@@ -253,7 +375,7 @@ export function AttendeeFlow({
               className="rounded border px-3 py-2"
             />
             <button
-              onClick={handleSubmit}
+              onClick={handlePairSubmit}
               disabled={submitting}
               className="rounded bg-black px-4 py-4 text-xl font-semibold text-white disabled:opacity-50"
             >
@@ -262,7 +384,7 @@ export function AttendeeFlow({
             {submitError && (
               <p className="text-sm text-red-600">
                 {submitError}{" "}
-                <button onClick={handleSubmit} className="underline">
+                <button onClick={handlePairSubmit} className="underline">
                   Retry
                 </button>
               </p>
