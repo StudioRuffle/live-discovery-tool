@@ -397,10 +397,17 @@ export function AttendeeFlow({
   }
 
   if (!currentExercise) {
+    const nothingYet = exercises.length === 0;
     return (
       <main className="flex min-h-screen flex-col items-center justify-center p-8 text-center">
-        <h1 className="text-2xl font-bold">You&apos;re all caught up</h1>
-        <p className="mt-2 text-gray-500">Thanks for taking part.</p>
+        <h1 className="text-2xl font-bold">
+          {nothingYet ? "Nothing to do yet" : "You're all caught up"}
+        </h1>
+        <p className="mt-2 text-gray-500">
+          {nothingYet
+            ? "The facilitator hasn't started anything yet — check back soon."
+            : "Thanks for taking part."}
+        </p>
       </main>
     );
   }

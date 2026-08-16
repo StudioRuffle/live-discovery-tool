@@ -326,6 +326,68 @@ export async function reorderImage(formData: FormData) {
   revalidatePath(`/facilitator/sessions/${exercise.session_id}/exercises/${exerciseId}`);
 }
 
+export async function resetSessionResponses(formData: FormData) {
+  await requireFacilitator();
+  const sessionId = String(formData.get("session_id") ?? "");
+  if (!sessionId) return;
+
+  const supabase = createAdminClient();
+  const { error } = await supabase.rpc("reset_session_responses", {
+    p_session_id: sessionId,
+  });
+  if (error) throw new Error(error.message);
+
+  revalidatePath(`/facilitator/sessions/${sessionId}`);
+}
+
+// Copies exercise configs (type/position/config) to a brand-new session,
+// resetting reveal_state to its default and leaving attendees/responses
+// behind entirely. Note for visual_reaction: the copied config still
+// points at the original exercise's Storage images (they're never
+// deleted or duplicated) - removing an image from the new exercise only
+// deletes that specific object, so this is safe, just means the two
+// exercises share files until someone edits one of their image sets.
+export async function duplicateSession(formData: FormData) {
+  await requireFacilitator();
+  const sourceSessionId = String(formData.get("source_session_id") ?? "");
+  const clientId = String(formData.get("client_id") ?? "");
+  const name = String(formData.get("name") ?? "").trim();
+  if (!sourceSessionId || !clientId || !name) return;
+
+  const supabase = createAdminClient();
+
+  const { data: sourceExercises, error: fetchError } = await supabase
+    .from("exercises")
+    .select("type, position, config")
+    .eq("session_id", sourceSessionId)
+    .order("position", { ascending: true });
+  if (fetchError) throw new Error(fetchError.message);
+
+  const { data: newSession, error: sessionError } = await supabase
+    .from("sessions")
+    .insert({ client_id: clientId, name })
+    .select("id")
+    .single();
+  if (sessionError || !newSession) {
+    throw new Error(sessionError?.message ?? "Failed to create session");
+  }
+
+  if (sourceExercises && sourceExercises.length > 0) {
+    const { error: exercisesError } = await supabase.from("exercises").insert(
+      sourceExercises.map((ex) => ({
+        session_id: newSession.id,
+        type: ex.type,
+        position: ex.position,
+        config: ex.config,
+      }))
+    );
+    if (exercisesError) throw new Error(exercisesError.message);
+  }
+
+  revalidatePath(`/facilitator/clients/${clientId}`);
+  redirect(`/facilitator/sessions/${newSession.id}`);
+}
+
 export async function goToResults(formData: FormData) {
   const sessionId = String(formData.get("session_id") ?? "");
   const exerciseId = String(formData.get("exercise_id") ?? "");
