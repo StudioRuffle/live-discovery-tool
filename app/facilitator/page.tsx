@@ -3,6 +3,11 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import type { Client } from "@/lib/types";
 import { createClientRecord } from "./actions";
 
+// PIN-gated live dashboard - never statically prerender it. (Also sidesteps
+// Netlify not exposing --secret env vars at build time, which would break
+// prerendering here anyway since this reads the service-role key.)
+export const dynamic = "force-dynamic";
+
 export default async function FacilitatorHome() {
   const supabase = createAdminClient();
   const { data: clients, error } = await supabase
