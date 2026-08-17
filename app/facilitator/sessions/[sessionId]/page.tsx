@@ -8,6 +8,7 @@ import { PairExerciseForm } from "./pair-exercise-form";
 import { PerceptualMapForm } from "./perceptual-map-form";
 import { SessionActions } from "./session-actions";
 import { DeleteExerciseButton } from "./delete-exercise-button";
+import { JoinHero } from "./join-hero";
 import { createKeepCutExercise, createVisualReactionExercise } from "../../actions";
 
 export default async function SessionPage({
@@ -43,7 +44,7 @@ export default async function SessionPage({
   const qrSvg = isOpen ? await generateQrSvg(joinUrl) : null;
 
   return (
-    <main className="mx-auto flex max-w-2xl flex-col gap-8 p-8">
+    <main className="mx-auto flex w-full max-w-4xl flex-col gap-8 p-8">
       <div>
         <Link
           href={`/facilitator/clients/${session.client_id}`}
@@ -61,118 +62,109 @@ export default async function SessionPage({
         </div>
       </div>
 
-      {isOpen && qrSvg && (
-        <section className="flex flex-col items-center gap-3 rounded-lg border border-ink/15 p-6">
-          <p className="text-sm font-semibold text-ink/70">Attendee join link</p>
-          <div
-            className="h-[320px] w-[320px]"
-            dangerouslySetInnerHTML={{ __html: qrSvg }}
-          />
-          <a href={joinUrl} className="break-all text-center text-brand underline">
-            {joinUrl}
-          </a>
+      {isOpen && qrSvg && <JoinHero joinUrl={joinUrl} qrSvg={qrSvg} />}
+
+      <div className="mx-auto flex w-full max-w-2xl flex-col gap-8">
+        <section className="flex flex-col gap-3">
+          <h2 className="font-semibold">Exercises</h2>
+          {exercises?.length === 0 && (
+            <p className="text-ink/50">No exercises yet.</p>
+          )}
+          <ul className="flex flex-col gap-2">
+            {(exercises as Exercise[] | null)?.map((exercise) => (
+              <li
+                key={exercise.id}
+                className="flex items-center justify-between rounded border border-ink/15 px-4 py-3"
+              >
+                <span className="capitalize">{exercise.type.replace(/_/g, " ")}</span>
+                <div className="flex items-center gap-4">
+                  <Link
+                    href={`/facilitator/sessions/${sessionId}/exercises/${exercise.id}`}
+                    className="text-sm font-semibold text-brand hover:underline"
+                  >
+                    {isOpen ? "Run / view results" : "View results"} &rarr;
+                  </Link>
+                  {isOpen && (
+                    <DeleteExerciseButton sessionId={sessionId} exerciseId={exercise.id} />
+                  )}
+                </div>
+              </li>
+            ))}
+          </ul>
         </section>
-      )}
 
-      <section className="flex flex-col gap-3">
-        <h2 className="font-semibold">Exercises</h2>
-        {exercises?.length === 0 && (
-          <p className="text-ink/50">No exercises yet.</p>
-        )}
-        <ul className="flex flex-col gap-2">
-          {(exercises as Exercise[] | null)?.map((exercise) => (
-            <li
-              key={exercise.id}
-              className="flex items-center justify-between rounded border border-ink/15 px-4 py-3"
-            >
-              <span className="capitalize">{exercise.type.replace(/_/g, " ")}</span>
-              <div className="flex items-center gap-4">
-                <Link
-                  href={`/facilitator/sessions/${sessionId}/exercises/${exercise.id}`}
-                  className="text-sm font-semibold text-brand hover:underline"
-                >
-                  {isOpen ? "Run / view results" : "View results"} &rarr;
-                </Link>
-                {isOpen && (
-                  <DeleteExerciseButton sessionId={sessionId} exerciseId={exercise.id} />
-                )}
+        <SessionActions
+          sessionId={sessionId}
+          sessionName={session.name}
+          status={session.status}
+          clients={(clients as Client[] | null) ?? []}
+          currentClientId={session.client_id}
+        />
+
+        {isOpen && (
+          <>
+            <section className="flex flex-col gap-6 rounded-lg border border-ink/15 p-6 sm:flex-row">
+              <div className="min-w-0 flex-1">
+                <PairExerciseForm
+                  sessionId={sessionId}
+                  type="values_tension"
+                  title="Values in Tension — word pairs"
+                  leftPlaceholder="Speed"
+                  rightPlaceholder="Craft"
+                />
               </div>
-            </li>
-          ))}
-        </ul>
-      </section>
+              <div className="min-w-0 flex-1">
+                <PairExerciseForm
+                  sessionId={sessionId}
+                  type="word_choice"
+                  title="Word Choice — descriptive words"
+                  leftPlaceholder="Modern"
+                  rightPlaceholder="Timeless"
+                />
+              </div>
+            </section>
 
-      <SessionActions
-        sessionId={sessionId}
-        sessionName={session.name}
-        status={session.status}
-        clients={(clients as Client[] | null) ?? []}
-        currentClientId={session.client_id}
-      />
+            <section className="rounded-lg border border-ink/15 p-6">
+              <form action={createKeepCutExercise} className="flex flex-col gap-3">
+                <input type="hidden" name="session_id" value={sessionId} />
+                <p className="text-sm font-semibold text-ink/70">Keep or Cut</p>
+                <p className="text-sm text-ink/50">
+                  No setup needed — attendees answer &quot;one thing you
+                  couldn&apos;t lose&quot; and &quot;one thing that needs to
+                  go&quot;, hidden until you reveal.
+                </p>
+                <button
+                  type="submit"
+                  className="self-start rounded bg-brand px-4 py-2 font-semibold text-white hover:bg-brand-dark"
+                >
+                  Add exercise
+                </button>
+              </form>
+            </section>
 
-      {isOpen && (
-        <>
-          <section className="flex flex-col gap-6 rounded-lg border border-ink/15 p-6 sm:flex-row">
-            <div className="min-w-0 flex-1">
-              <PairExerciseForm
-                sessionId={sessionId}
-                type="values_tension"
-                title="Values in Tension — word pairs"
-                leftPlaceholder="Speed"
-                rightPlaceholder="Craft"
-              />
-            </div>
-            <div className="min-w-0 flex-1">
-              <PairExerciseForm
-                sessionId={sessionId}
-                type="word_choice"
-                title="Word Choice — descriptive words"
-                leftPlaceholder="Modern"
-                rightPlaceholder="Timeless"
-              />
-            </div>
-          </section>
+            <section className="rounded-lg border border-ink/15 p-6">
+              <form action={createVisualReactionExercise} className="flex flex-col gap-3">
+                <input type="hidden" name="session_id" value={sessionId} />
+                <p className="text-sm font-semibold text-ink/70">Visual Reaction</p>
+                <p className="text-sm text-ink/50">
+                  Creates the exercise — upload reference images afterward from
+                  its results page.
+                </p>
+                <button
+                  type="submit"
+                  className="self-start rounded bg-brand px-4 py-2 font-semibold text-white hover:bg-brand-dark"
+                >
+                  Add exercise
+                </button>
+              </form>
+            </section>
 
-          <section className="rounded-lg border border-ink/15 p-6">
-            <form action={createKeepCutExercise} className="flex flex-col gap-3">
-              <input type="hidden" name="session_id" value={sessionId} />
-              <p className="text-sm font-semibold text-ink/70">Keep or Cut</p>
-              <p className="text-sm text-ink/50">
-                No setup needed — attendees answer &quot;one thing you
-                couldn&apos;t lose&quot; and &quot;one thing that needs to
-                go&quot;, hidden until you reveal.
-              </p>
-              <button
-                type="submit"
-                className="self-start rounded bg-brand px-4 py-2 font-semibold text-white hover:bg-brand-dark"
-              >
-                Add exercise
-              </button>
-            </form>
-          </section>
-
-          <section className="rounded-lg border border-ink/15 p-6">
-            <form action={createVisualReactionExercise} className="flex flex-col gap-3">
-              <input type="hidden" name="session_id" value={sessionId} />
-              <p className="text-sm font-semibold text-ink/70">Visual Reaction</p>
-              <p className="text-sm text-ink/50">
-                Creates the exercise — upload reference images afterward from
-                its results page.
-              </p>
-              <button
-                type="submit"
-                className="self-start rounded bg-brand px-4 py-2 font-semibold text-white hover:bg-brand-dark"
-              >
-                Add exercise
-              </button>
-            </form>
-          </section>
-
-          <section className="rounded-lg border border-ink/15 p-6">
-            <PerceptualMapForm sessionId={sessionId} />
-          </section>
-        </>
-      )}
+            <section className="rounded-lg border border-ink/15 p-6">
+              <PerceptualMapForm sessionId={sessionId} />
+            </section>
+          </>
+        )}
+      </div>
     </main>
   );
 }
