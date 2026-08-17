@@ -31,7 +31,7 @@ export default async function ExerciseResultsPage({
   if (exercise.type === "visual_reaction") {
     const images = (exercise.config as VisualReactionConfig).images ?? [];
     return (
-      <main className="bg-grain min-h-screen bg-ink p-8 text-white">
+      <main className="bg-grain min-h-screen bg-ink px-8 pb-8 pt-20 text-white">
         <div className="mx-auto mb-8 max-w-5xl rounded-lg bg-cream p-6 text-ink">
           <h2 className="mb-3 font-semibold">
             Manage images — reorder or remove before the session starts
@@ -44,7 +44,7 @@ export default async function ExerciseResultsPage({
   }
 
   return (
-    <main className="bg-grain min-h-screen bg-ink p-8 text-white">
+    <main className="bg-grain min-h-screen bg-ink px-8 pb-8 pt-20 text-white">
       {isPairExerciseType(exercise.type) ? (
         <ResultsPanel
           exerciseId={exerciseId}
