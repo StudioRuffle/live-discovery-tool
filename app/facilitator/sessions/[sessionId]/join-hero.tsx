@@ -36,13 +36,13 @@ export function JoinHero({ joinUrl, qrSvg }: { joinUrl: string; qrSvg: string })
             className="pointer-events-none absolute -top-7 left-1 w-20 select-none sm:-top-8 sm:w-24"
           />
           <div
-            className="absolute right-4 top-6 h-[84px] w-[84px] overflow-hidden rounded-md bg-white p-1.5 shadow-md sm:right-5 sm:top-7 sm:h-24 sm:w-24"
+            className="absolute left-1/2 top-10 h-24 w-24 -translate-x-1/2 overflow-hidden rounded-lg bg-white p-2 shadow-md sm:top-14 sm:h-32 sm:w-32"
             dangerouslySetInnerHTML={{ __html: qrSvg }}
           />
-          <p className="absolute inset-x-5 bottom-16 text-center text-sm font-semibold text-ink sm:bottom-[4.75rem]">
+          <p className="absolute inset-x-4 bottom-8 text-center text-base font-bold leading-tight text-ink sm:bottom-12 sm:text-xl">
             Scan me if using a mobile
           </p>
-          <ArrowIcon className="absolute bottom-7 left-1/2 w-16 -translate-x-1/2 text-ink sm:bottom-8" />
+          <ArrowIcon className="absolute bottom-4 left-1/2 w-16 -translate-x-1/2 text-ink sm:bottom-6 sm:w-20" />
         </div>
 
         <a
@@ -54,21 +54,14 @@ export function JoinHero({ joinUrl, qrSvg }: { joinUrl: string; qrSvg: string })
           <img
             src="/brand/laptop.png"
             alt=""
-            className="pointer-events-none absolute -top-7 left-1 w-24 select-none sm:-top-8 sm:w-28"
+            className="pointer-events-none absolute -top-10 -left-1 w-32 select-none sm:-top-12 sm:w-40"
           />
-          <p className="absolute inset-x-5 bottom-16 text-center text-sm font-semibold text-ink sm:bottom-[4.75rem]">
+          <p className="absolute inset-x-4 bottom-8 text-center text-base font-bold leading-tight text-ink sm:bottom-12 sm:text-xl">
             Click me if using a laptop
           </p>
-          <ArrowIcon className="absolute bottom-7 left-1/2 w-16 -translate-x-1/2 text-ink sm:bottom-8" />
+          <ArrowIcon className="absolute bottom-4 left-1/2 w-16 -translate-x-1/2 text-ink sm:bottom-6 sm:w-20" />
         </a>
       </div>
-
-      <a
-        href={joinUrl}
-        className="relative mt-8 block break-all text-center text-sm text-white/70 underline"
-      >
-        {joinUrl}
-      </a>
     </section>
   );
 }
