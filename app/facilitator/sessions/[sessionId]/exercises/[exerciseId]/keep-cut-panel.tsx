@@ -61,7 +61,7 @@ export function KeepCutPanel({ exerciseId }: { exerciseId: string }) {
   if (!result.revealed) {
     return (
       <div className="flex flex-col items-center gap-8 py-16">
-        <p className="text-6xl font-bold">
+        <p className="font-display text-7xl">
           {result.submittedCount} of {result.totalAttendees}
         </p>
         <p className="text-2xl text-white/60">responded</p>

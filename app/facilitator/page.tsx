@@ -19,7 +19,7 @@ export default async function FacilitatorHome() {
 
   return (
     <main className="mx-auto flex max-w-2xl flex-col gap-8 p-8">
-      <h1 className="text-2xl font-bold">Clients</h1>
+      <h1 className="font-display text-3xl">Clients</h1>
 
       <form action={createClientRecord} className="flex gap-2">
         <input

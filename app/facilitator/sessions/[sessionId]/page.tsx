@@ -51,7 +51,7 @@ export default async function SessionPage({
           &larr; {(session as { clients: { name: string } | null }).clients?.name}
         </Link>
         <div className="flex items-center gap-3">
-          <h1 className="text-2xl font-bold">{session.name}</h1>
+          <h1 className="font-display text-3xl">{session.name}</h1>
           {!isOpen && (
             <span className="rounded-full bg-ink/10 px-3 py-1 text-xs font-semibold uppercase text-ink/60">
               Closed — read only

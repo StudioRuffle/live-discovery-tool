@@ -71,11 +71,11 @@ export function PerceptualMapPanel({
     <div className="mx-auto flex max-w-3xl flex-col gap-4">
       <p className="text-lg text-white/60">{respondents} responses</p>
 
-      <div className="flex items-center justify-center text-xl font-bold">
+      <div className="flex items-center justify-center font-display text-2xl">
         {config.yAxis.top}
       </div>
       <div className="flex items-stretch gap-3">
-        <div className="flex items-center [writing-mode:vertical-rl] rotate-180 text-xl font-bold">
+        <div className="flex items-center [writing-mode:vertical-rl] rotate-180 font-display text-2xl">
           {config.xAxis.left}
         </div>
         <div className="relative aspect-square flex-1 rounded-lg bg-black/20">
@@ -94,11 +94,11 @@ export function PerceptualMapPanel({
             />
           ))}
         </div>
-        <div className="flex items-center [writing-mode:vertical-rl] text-xl font-bold">
+        <div className="flex items-center [writing-mode:vertical-rl] font-display text-2xl">
           {config.xAxis.right}
         </div>
       </div>
-      <div className="flex items-center justify-center text-xl font-bold">
+      <div className="flex items-center justify-center font-display text-2xl">
         {config.yAxis.bottom}
       </div>
 

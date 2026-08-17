@@ -34,7 +34,7 @@ export default async function ClientPage({
         <Link href="/facilitator" className="text-sm text-ink/50">
           &larr; Clients
         </Link>
-        <h1 className="text-2xl font-bold">{client.name}</h1>
+        <h1 className="font-display text-3xl">{client.name}</h1>
       </div>
 
       <form action={createSession} className="flex gap-2">

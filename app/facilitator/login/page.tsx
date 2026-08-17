@@ -13,7 +13,7 @@ export default async function LoginPage({
         action={login}
         className="flex w-full max-w-sm flex-col gap-4 rounded-lg border p-8"
       >
-        <h1 className="text-xl font-bold">Facilitator sign-in</h1>
+        <h1 className="font-display text-2xl">Facilitator sign-in</h1>
         <input type="hidden" name="next" value={next} />
         <input
           type="password"

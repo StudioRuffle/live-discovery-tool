@@ -56,7 +56,7 @@ export function ResultsPanel({
 
           return (
             <div key={pair.id} className="flex flex-col gap-2">
-              <div className="flex items-baseline justify-between text-4xl font-bold">
+              <div className="font-display flex items-baseline justify-between text-5xl">
                 <span>{pair.left}</span>
                 <span>{pair.right}</span>
               </div>

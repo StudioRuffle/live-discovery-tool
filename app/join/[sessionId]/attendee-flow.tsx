@@ -297,7 +297,7 @@ export function AttendeeFlow({
   if (!attendee) {
     return (
       <main className="flex min-h-screen flex-col items-center justify-center gap-6 p-8 text-center">
-        <h1 className="text-2xl font-bold">{sessionName}</h1>
+        <h1 className="font-display text-3xl">{sessionName}</h1>
         <form onSubmit={handleJoin} className="flex w-full max-w-sm flex-col gap-3">
           <input
             type="text"
@@ -329,7 +329,7 @@ export function AttendeeFlow({
     if (justFinishedExercise.type === "keep_cut") {
       return (
         <main className="flex min-h-screen flex-col items-center justify-center gap-6 p-8 text-center">
-          <h1 className="text-2xl font-bold">Thanks — recorded</h1>
+          <h1 className="font-display text-3xl">Thanks — recorded</h1>
           <p className="text-ink/50">
             Your answer stays private until the facilitator reveals results.
           </p>
@@ -346,7 +346,7 @@ export function AttendeeFlow({
     if (justFinishedExercise.type === "visual_reaction") {
       return (
         <main className="flex min-h-screen flex-col items-center justify-center gap-6 p-8 text-center">
-          <h1 className="text-2xl font-bold">Thanks for reacting!</h1>
+          <h1 className="font-display text-3xl">Thanks for reacting!</h1>
           <button
             onClick={() => setJustFinishedExerciseId(null)}
             className="rounded bg-brand px-6 py-3 text-lg font-semibold text-white hover:bg-brand-dark"
@@ -360,7 +360,7 @@ export function AttendeeFlow({
     if (justFinishedExercise.type === "perceptual_map") {
       return (
         <main className="flex min-h-screen flex-col items-center justify-center gap-6 p-8 text-center">
-          <h1 className="text-2xl font-bold">Thanks — placements recorded</h1>
+          <h1 className="font-display text-3xl">Thanks — placements recorded</h1>
           <button
             onClick={() => setJustFinishedExerciseId(null)}
             className="rounded bg-brand px-6 py-3 text-lg font-semibold text-white hover:bg-brand-dark"
@@ -376,7 +376,7 @@ export function AttendeeFlow({
 
     return (
       <main className="flex min-h-screen flex-col items-center gap-6 p-8">
-        <h1 className="text-2xl font-bold">Your picks</h1>
+        <h1 className="font-display text-3xl">Your picks</h1>
         <ul className="flex w-full max-w-sm flex-col gap-2">
           {config.pairs.map((pair: Pair) => (
             <li key={pair.id} className="rounded border border-ink/15 px-4 py-3">
@@ -400,7 +400,7 @@ export function AttendeeFlow({
     const nothingYet = exercises.length === 0;
     return (
       <main className="flex min-h-screen flex-col items-center justify-center p-8 text-center">
-        <h1 className="text-2xl font-bold">
+        <h1 className="font-display text-3xl">
           {nothingYet ? "Nothing to do yet" : "You're all caught up"}
         </h1>
         <p className="mt-2 text-ink/50">

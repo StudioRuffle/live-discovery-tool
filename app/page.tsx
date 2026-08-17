@@ -21,7 +21,7 @@ export default async function Home() {
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center gap-4 p-8 text-center">
-      <h1 className="text-3xl font-bold">Live Discovery Session Tool</h1>
+      <h1 className="font-display text-3xl">Live Discovery Session Tool</h1>
       <p className="text-lg text-ink/50">Phase 0 — scaffold + deploy pipeline</p>
 
       <div

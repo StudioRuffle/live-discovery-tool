@@ -22,7 +22,7 @@ export default async function JoinPage({
   if (session.status === "closed") {
     return (
       <main className="flex min-h-screen flex-col items-center justify-center p-8 text-center">
-        <h1 className="text-2xl font-bold">{session.name}</h1>
+        <h1 className="font-display text-3xl">{session.name}</h1>
         <p className="mt-2 text-gray-500">This session has ended.</p>
       </main>
     );

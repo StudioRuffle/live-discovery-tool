@@ -38,6 +38,13 @@ yarn-error.log*
 .netlify
 deno.lock
 
+# Licensed font files - not cleared for redistribution via the public repo.
+# Required locally for `next/font/local` at build time; deploys run from
+# this machine (netlify deploy uploads the local build output directly,
+# not a fresh git clone) so this doesn't block deploying, only git history.
+/app/fonts/*
+!/app/fonts/README.md
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
