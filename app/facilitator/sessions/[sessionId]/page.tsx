@@ -7,6 +7,7 @@ import type { Client, Exercise } from "@/lib/types";
 import { PairExerciseForm } from "./pair-exercise-form";
 import { PerceptualMapForm } from "./perceptual-map-form";
 import { SessionActions } from "./session-actions";
+import { DeleteExerciseButton } from "./delete-exercise-button";
 import { createKeepCutExercise, createVisualReactionExercise } from "../../actions";
 
 export default async function SessionPage({
@@ -85,12 +86,17 @@ export default async function SessionPage({
               className="flex items-center justify-between rounded border border-ink/15 px-4 py-3"
             >
               <span className="capitalize">{exercise.type.replace(/_/g, " ")}</span>
-              <Link
-                href={`/facilitator/sessions/${sessionId}/exercises/${exercise.id}`}
-                className="text-sm font-semibold text-brand hover:underline"
-              >
-                {isOpen ? "Run / view results" : "View results"} &rarr;
-              </Link>
+              <div className="flex items-center gap-4">
+                <Link
+                  href={`/facilitator/sessions/${sessionId}/exercises/${exercise.id}`}
+                  className="text-sm font-semibold text-brand hover:underline"
+                >
+                  {isOpen ? "Run / view results" : "View results"} &rarr;
+                </Link>
+                {isOpen && (
+                  <DeleteExerciseButton sessionId={sessionId} exerciseId={exercise.id} />
+                )}
+              </div>
             </li>
           ))}
         </ul>

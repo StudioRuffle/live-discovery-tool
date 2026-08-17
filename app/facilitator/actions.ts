@@ -340,6 +340,41 @@ export async function resetSessionResponses(formData: FormData) {
   revalidatePath(`/facilitator/sessions/${sessionId}`);
 }
 
+// Deletes an exercise outright (not just its responses - the exercise
+// setup itself). Responses cascade via the DB foreign key; for
+// visual_reaction we also remove its Storage images first so nothing gets
+// orphaned in the bucket the way a plain DB cascade would leave behind.
+export async function deleteExercise(formData: FormData) {
+  await requireFacilitator();
+  const exerciseId = String(formData.get("exercise_id") ?? "");
+  const sessionId = String(formData.get("session_id") ?? "");
+  if (!exerciseId || !sessionId) return;
+
+  const supabase = createAdminClient();
+
+  const { data: exercise, error: fetchError } = await supabase
+    .from("exercises")
+    .select("type, config")
+    .eq("id", exerciseId)
+    .single();
+  if (fetchError || !exercise) return;
+
+  if (exercise.type === "visual_reaction") {
+    const images = (exercise.config as VisualReactionConfig).images ?? [];
+    if (images.length > 0) {
+      const { error: removeError } = await supabase.storage
+        .from(VISUAL_REACTION_BUCKET)
+        .remove(images.map((img) => img.path));
+      if (removeError) throw new Error(removeError.message);
+    }
+  }
+
+  const { error } = await supabase.from("exercises").delete().eq("id", exerciseId);
+  if (error) throw new Error(error.message);
+
+  revalidatePath(`/facilitator/sessions/${sessionId}`);
+}
+
 // Copies exercise configs (type/position/config) to a brand-new session,
 // resetting reveal_state to its default and leaving attendees/responses
 // behind entirely. Note for visual_reaction: the copied config still
