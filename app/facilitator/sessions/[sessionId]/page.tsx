@@ -107,7 +107,7 @@ export default async function SessionPage({
       {isOpen && (
         <>
           <section className="flex flex-col gap-6 rounded-lg border border-ink/15 p-6 sm:flex-row">
-            <div className="flex-1">
+            <div className="min-w-0 flex-1">
               <PairExerciseForm
                 sessionId={sessionId}
                 type="values_tension"
@@ -116,7 +116,7 @@ export default async function SessionPage({
                 rightPlaceholder="Craft"
               />
             </div>
-            <div className="flex-1">
+            <div className="min-w-0 flex-1">
               <PairExerciseForm
                 sessionId={sessionId}
                 type="word_choice"

@@ -34,7 +34,7 @@ export function PairExerciseForm({
             name="pair_left"
             placeholder={leftPlaceholder}
             required
-            className="flex-1 rounded border border-ink/15 px-3 py-2"
+            className="min-w-0 flex-1 rounded border border-ink/15 px-3 py-2"
           />
           <span className="text-ink/30">vs</span>
           <input
@@ -42,7 +42,7 @@ export function PairExerciseForm({
             name="pair_right"
             placeholder={rightPlaceholder}
             required
-            className="flex-1 rounded border border-ink/15 px-3 py-2"
+            className="min-w-0 flex-1 rounded border border-ink/15 px-3 py-2"
           />
         </div>
       ))}

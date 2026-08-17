@@ -12,13 +12,13 @@ export function PerceptualMapForm({ sessionId }: { sessionId: string }) {
       <p className="text-sm font-semibold text-ink/70">Perceptual Map</p>
 
       <div className="flex flex-col gap-2 sm:flex-row">
-        <div className="flex flex-1 items-center gap-2">
+        <div className="flex min-w-0 flex-1 items-center gap-2">
           <input
             type="text"
             name="x_left"
             placeholder="Legacy"
             required
-            className="w-full rounded border border-ink/15 px-3 py-2"
+            className="w-full min-w-0 rounded border border-ink/15 px-3 py-2"
           />
           <span className="text-ink/30">↔</span>
           <input
@@ -26,16 +26,16 @@ export function PerceptualMapForm({ sessionId }: { sessionId: string }) {
             name="x_right"
             placeholder="Emerging"
             required
-            className="w-full rounded border border-ink/15 px-3 py-2"
+            className="w-full min-w-0 rounded border border-ink/15 px-3 py-2"
           />
         </div>
-        <div className="flex flex-1 items-center gap-2">
+        <div className="flex min-w-0 flex-1 items-center gap-2">
           <input
             type="text"
             name="y_bottom"
             placeholder="Regional"
             required
-            className="w-full rounded border border-ink/15 px-3 py-2"
+            className="w-full min-w-0 rounded border border-ink/15 px-3 py-2"
           />
           <span className="text-ink/30">↕</span>
           <input
@@ -43,7 +43,7 @@ export function PerceptualMapForm({ sessionId }: { sessionId: string }) {
             name="y_top"
             placeholder="National"
             required
-            className="w-full rounded border border-ink/15 px-3 py-2"
+            className="w-full min-w-0 rounded border border-ink/15 px-3 py-2"
           />
         </div>
       </div>
