@@ -15,13 +15,13 @@ const POLL_INTERVAL_MS = 3000;
 // Cycled by competitor index - distinct enough at a glance from across a
 // room, and stable regardless of how many competitors are configured.
 const COLORS = [
+  "#FF2252", // brand coral
   "#38bdf8", // sky
-  "#f97316", // orange
   "#a3e635", // lime
-  "#f472b6", // pink
-  "#a78bfa", // violet
   "#facc15", // yellow
+  "#a78bfa", // violet
   "#2dd4bf", // teal
+  "#f97316", // orange
   "#fb7185", // rose
 ];
 
@@ -69,7 +69,7 @@ export function PerceptualMapPanel({
 
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-4">
-      <p className="text-lg text-gray-400">{respondents} responses</p>
+      <p className="text-lg text-white/60">{respondents} responses</p>
 
       <div className="flex items-center justify-center text-xl font-bold">
         {config.yAxis.top}
@@ -78,9 +78,9 @@ export function PerceptualMapPanel({
         <div className="flex items-center [writing-mode:vertical-rl] rotate-180 text-xl font-bold">
           {config.xAxis.left}
         </div>
-        <div className="relative aspect-square flex-1 rounded-lg bg-gray-900">
-          <div className="absolute left-1/2 top-0 h-full w-px bg-gray-700" />
-          <div className="absolute left-0 top-1/2 h-px w-full bg-gray-700" />
+        <div className="relative aspect-square flex-1 rounded-lg bg-black/20">
+          <div className="absolute left-1/2 top-0 h-full w-px bg-white/15" />
+          <div className="absolute left-0 top-1/2 h-px w-full bg-white/15" />
           {placements.map((p, i) => (
             <div
               key={`${p.attendeeId}-${p.competitorId}-${i}`}

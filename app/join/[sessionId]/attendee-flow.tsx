@@ -312,7 +312,7 @@ export function AttendeeFlow({
           <button
             type="submit"
             disabled={joining}
-            className="rounded bg-black px-4 py-4 text-xl font-semibold text-white disabled:opacity-50"
+            className="rounded bg-brand px-4 py-4 text-xl font-semibold text-white hover:bg-brand-dark disabled:opacity-50"
           >
             {joining ? "Joining…" : "Join"}
           </button>
@@ -330,12 +330,12 @@ export function AttendeeFlow({
       return (
         <main className="flex min-h-screen flex-col items-center justify-center gap-6 p-8 text-center">
           <h1 className="text-2xl font-bold">Thanks — recorded</h1>
-          <p className="text-gray-500">
+          <p className="text-ink/50">
             Your answer stays private until the facilitator reveals results.
           </p>
           <button
             onClick={() => setJustFinishedExerciseId(null)}
-            className="rounded bg-black px-6 py-3 text-lg font-semibold text-white"
+            className="rounded bg-brand px-6 py-3 text-lg font-semibold text-white hover:bg-brand-dark"
           >
             {hasMore ? "Continue" : "Done"}
           </button>
@@ -349,7 +349,7 @@ export function AttendeeFlow({
           <h1 className="text-2xl font-bold">Thanks for reacting!</h1>
           <button
             onClick={() => setJustFinishedExerciseId(null)}
-            className="rounded bg-black px-6 py-3 text-lg font-semibold text-white"
+            className="rounded bg-brand px-6 py-3 text-lg font-semibold text-white hover:bg-brand-dark"
           >
             {hasMore ? "Continue" : "Done"}
           </button>
@@ -363,7 +363,7 @@ export function AttendeeFlow({
           <h1 className="text-2xl font-bold">Thanks — placements recorded</h1>
           <button
             onClick={() => setJustFinishedExerciseId(null)}
-            className="rounded bg-black px-6 py-3 text-lg font-semibold text-white"
+            className="rounded bg-brand px-6 py-3 text-lg font-semibold text-white hover:bg-brand-dark"
           >
             {hasMore ? "Continue" : "Done"}
           </button>
@@ -379,7 +379,7 @@ export function AttendeeFlow({
         <h1 className="text-2xl font-bold">Your picks</h1>
         <ul className="flex w-full max-w-sm flex-col gap-2">
           {config.pairs.map((pair: Pair) => (
-            <li key={pair.id} className="rounded border px-4 py-3">
+            <li key={pair.id} className="rounded border border-ink/15 px-4 py-3">
               {pair.left} vs {pair.right}
             </li>
           ))}
@@ -387,7 +387,7 @@ export function AttendeeFlow({
         {submittedIds.length === config.pairs.length && (
           <button
             onClick={() => setJustFinishedExerciseId(null)}
-            className="rounded bg-black px-6 py-3 text-lg font-semibold text-white"
+            className="rounded bg-brand px-6 py-3 text-lg font-semibold text-white hover:bg-brand-dark"
           >
             {hasMore ? "Continue" : "Done"}
           </button>
@@ -403,7 +403,7 @@ export function AttendeeFlow({
         <h1 className="text-2xl font-bold">
           {nothingYet ? "Nothing to do yet" : "You're all caught up"}
         </h1>
-        <p className="mt-2 text-gray-500">
+        <p className="mt-2 text-ink/50">
           {nothingYet
             ? "The facilitator hasn't started anything yet — check back soon."
             : "Thanks for taking part."}
@@ -417,7 +417,7 @@ export function AttendeeFlow({
       <main className="flex min-h-screen flex-col items-center justify-center gap-6 p-6">
         <div className="flex w-full max-w-md flex-col gap-4">
           <div>
-            <label className="mb-1 block text-sm font-semibold text-gray-600">
+            <label className="mb-1 block text-sm font-semibold text-ink/70">
               One thing you couldn&apos;t lose
             </label>
             <textarea
@@ -425,11 +425,11 @@ export function AttendeeFlow({
               onChange={(e) => setKeepText(e.target.value)}
               maxLength={200}
               rows={2}
-              className="w-full rounded border px-3 py-2 text-lg"
+              className="w-full rounded border border-ink/15 px-3 py-2 text-lg"
             />
           </div>
           <div>
-            <label className="mb-1 block text-sm font-semibold text-gray-600">
+            <label className="mb-1 block text-sm font-semibold text-ink/70">
               One thing that needs to go
             </label>
             <textarea
@@ -437,13 +437,13 @@ export function AttendeeFlow({
               onChange={(e) => setCutText(e.target.value)}
               maxLength={200}
               rows={2}
-              className="w-full rounded border px-3 py-2 text-lg"
+              className="w-full rounded border border-ink/15 px-3 py-2 text-lg"
             />
           </div>
           <button
             onClick={handleKeepCutSubmit}
             disabled={submitting || !keepText.trim() || !cutText.trim()}
-            className="rounded bg-black px-4 py-4 text-xl font-semibold text-white disabled:opacity-50"
+            className="rounded bg-brand px-4 py-4 text-xl font-semibold text-white hover:bg-brand-dark disabled:opacity-50"
           >
             {submitting ? "Submitting…" : "Submit"}
           </button>
@@ -474,7 +474,7 @@ export function AttendeeFlow({
             <button
               onClick={() => setReaction("up")}
               className={`rounded-xl border-4 py-6 text-4xl transition ${
-                reaction === "up" ? "border-black bg-black" : "border-gray-200"
+                reaction === "up" ? "border-brand bg-brand" : "border-ink/15"
               }`}
             >
               👍
@@ -482,7 +482,7 @@ export function AttendeeFlow({
             <button
               onClick={() => setReaction("down")}
               className={`rounded-xl border-4 py-6 text-4xl transition ${
-                reaction === "down" ? "border-black bg-black" : "border-gray-200"
+                reaction === "down" ? "border-brand bg-brand" : "border-ink/15"
               }`}
             >
               👎
@@ -497,12 +497,12 @@ export function AttendeeFlow({
                 placeholder="Add a short note (optional)"
                 maxLength={140}
                 rows={2}
-                className="rounded border px-3 py-2"
+                className="rounded border border-ink/15 px-3 py-2"
               />
               <button
                 onClick={handleImageSubmit}
                 disabled={submitting}
-                className="rounded bg-black px-4 py-4 text-xl font-semibold text-white disabled:opacity-50"
+                className="rounded bg-brand px-4 py-4 text-xl font-semibold text-white hover:bg-brand-dark disabled:opacity-50"
               >
                 {submitting ? "Submitting…" : "Submit"}
               </button>
@@ -542,16 +542,16 @@ export function AttendeeFlow({
     return (
       <main className="flex min-h-screen flex-col items-center justify-center gap-3 p-6">
         <div className="flex w-full max-w-md flex-col gap-2">
-          <div className="text-center text-sm font-semibold text-gray-500">
+          <div className="text-center text-sm font-semibold text-ink/50">
             {config.yAxis.top}
           </div>
           <div className="flex items-stretch gap-2">
-            <div className="flex items-center rotate-180 text-sm font-semibold text-gray-500 [writing-mode:vertical-rl]">
+            <div className="flex items-center rotate-180 text-sm font-semibold text-ink/50 [writing-mode:vertical-rl]">
               {config.xAxis.left}
             </div>
             <div
               onClick={handleGridClick}
-              className="relative aspect-square flex-1 rounded-lg border-2 border-gray-200 bg-gray-50"
+              className="relative aspect-square flex-1 rounded-lg border-2 border-ink/15 bg-cream"
             >
               {config.competitors.map((c) => {
                 const p = mapPlacements[c.id];
@@ -559,7 +559,7 @@ export function AttendeeFlow({
                 return (
                   <div
                     key={c.id}
-                    className="absolute flex h-7 w-7 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-black text-xs font-bold text-white"
+                    className="absolute flex h-7 w-7 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-ink text-xs font-bold text-white"
                     style={{ left: `${p.x * 100}%`, top: `${(1 - p.y) * 100}%` }}
                   >
                     {c.name.slice(0, 1).toUpperCase()}
@@ -567,11 +567,11 @@ export function AttendeeFlow({
                 );
               })}
             </div>
-            <div className="flex items-center text-sm font-semibold text-gray-500 [writing-mode:vertical-rl]">
+            <div className="flex items-center text-sm font-semibold text-ink/50 [writing-mode:vertical-rl]">
               {config.xAxis.right}
             </div>
           </div>
-          <div className="text-center text-sm font-semibold text-gray-500">
+          <div className="text-center text-sm font-semibold text-ink/50">
             {config.yAxis.bottom}
           </div>
 
@@ -582,10 +582,10 @@ export function AttendeeFlow({
                 onClick={() => setActiveCompetitorId(c.id)}
                 className={`rounded-full border-2 px-4 py-2 text-sm font-semibold ${
                   activeCompetitorId === c.id
-                    ? "border-black bg-black text-white"
+                    ? "border-brand bg-brand text-white"
                     : mapPlacements[c.id]
                       ? "border-green-500 text-green-600"
-                      : "border-gray-300"
+                      : "border-ink/20"
                 }`}
               >
                 {mapPlacements[c.id] ? "✓ " : ""}
@@ -594,7 +594,7 @@ export function AttendeeFlow({
             ))}
           </div>
 
-          <p className="text-center text-sm text-gray-500">
+          <p className="text-center text-sm text-ink/50">
             {activeCompetitorId
               ? `Tap the grid to place ${activeName}.`
               : allPlaced
@@ -605,7 +605,7 @@ export function AttendeeFlow({
           <button
             onClick={handleMapSubmit}
             disabled={submitting || !allPlaced}
-            className="rounded bg-black px-4 py-4 text-xl font-semibold text-white disabled:opacity-50"
+            className="rounded bg-brand px-4 py-4 text-xl font-semibold text-white hover:bg-brand-dark disabled:opacity-50"
           >
             {submitting ? "Submitting…" : "Submit"}
           </button>
@@ -632,8 +632,8 @@ export function AttendeeFlow({
             onClick={() => setSelectedSide("left")}
             className={`rounded-xl border-4 px-6 py-8 text-2xl font-bold transition ${
               selectedSide === "left"
-                ? "border-black bg-black text-white"
-                : "border-gray-200"
+                ? "border-brand bg-brand text-white"
+                : "border-ink/15"
             }`}
           >
             {currentPair.left}
@@ -642,8 +642,8 @@ export function AttendeeFlow({
             onClick={() => setSelectedSide("right")}
             className={`rounded-xl border-4 px-6 py-8 text-2xl font-bold transition ${
               selectedSide === "right"
-                ? "border-black bg-black text-white"
-                : "border-gray-200"
+                ? "border-brand bg-brand text-white"
+                : "border-ink/15"
             }`}
           >
             {currentPair.right}
@@ -658,12 +658,12 @@ export function AttendeeFlow({
               placeholder="Add a short note (optional)"
               maxLength={140}
               rows={2}
-              className="rounded border px-3 py-2"
+              className="rounded border border-ink/15 px-3 py-2"
             />
             <button
               onClick={handlePairSubmit}
               disabled={submitting}
-              className="rounded bg-black px-4 py-4 text-xl font-semibold text-white disabled:opacity-50"
+              className="rounded bg-brand px-4 py-4 text-xl font-semibold text-white hover:bg-brand-dark disabled:opacity-50"
             >
               {submitting ? "Submitting…" : "Submit"}
             </button>

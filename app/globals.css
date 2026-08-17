@@ -1,26 +1,40 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/*
+ * Studio Ruffle brand tokens - the single source of truth for color and
+ * type across the app. Change a value here and every utility class using
+ * it (bg-brand, text-ink, etc.) updates everywhere - Tailwind v4 generates
+ * those utility classes from the --color- vars below automatically. Don't
+ * hardcode brand hex values in components - reference these tokens instead.
+ */
+@theme {
+  --color-brand: #ff2252; /* coral accent - primary CTAs, selected states */
+  --color-brand-dark: #e01646; /* hover/active shade of brand */
+  --color-ink: #3f0315; /* dark maroon - body text, dark surfaces */
+  --color-ink-light: #6b1930; /* lighter maroon tint - borders/secondary on dark */
+  --color-cream: #fdf5f2; /* warm off-white - page background, secondary bar fill */
+  --font-sans: var(--font-inter);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-cream);
+  color: var(--color-ink);
+  font-weight: 300; /* the light weight studioruffle.com uses for body copy */
+}
+
+/* Subtle grain texture for brand surfaces (dark result screens etc.) -
+ * echoes the noise texture on studioruffle.com's hero. Kept deliberately
+ * faint (0.05 opacity) per "subtle" - bump the opacity if it should read
+ * more strongly. */
+.bg-grain {
+  position: relative;
+}
+.bg-grain::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }

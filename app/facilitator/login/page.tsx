@@ -27,7 +27,7 @@ export default async function LoginPage({
         {error && <p className="text-sm text-red-600">Incorrect PIN.</p>}
         <button
           type="submit"
-          className="rounded bg-black px-4 py-3 text-lg font-semibold text-white"
+          className="rounded bg-brand px-4 py-3 text-lg font-semibold text-white hover:bg-brand-dark"
         >
           Enter
         </button>

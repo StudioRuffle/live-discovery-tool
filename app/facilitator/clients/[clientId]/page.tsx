@@ -31,7 +31,7 @@ export default async function ClientPage({
   return (
     <main className="mx-auto flex max-w-2xl flex-col gap-8 p-8">
       <div>
-        <Link href="/facilitator" className="text-sm text-gray-500">
+        <Link href="/facilitator" className="text-sm text-ink/50">
           &larr; Clients
         </Link>
         <h1 className="text-2xl font-bold">{client.name}</h1>
@@ -44,18 +44,18 @@ export default async function ClientPage({
           name="name"
           placeholder="New session name"
           required
-          className="flex-1 rounded border px-3 py-2"
+          className="flex-1 rounded border border-ink/15 px-3 py-2"
         />
         <button
           type="submit"
-          className="rounded bg-black px-4 py-2 font-semibold text-white"
+          className="rounded bg-brand px-4 py-2 font-semibold text-white hover:bg-brand-dark"
         >
           Create session
         </button>
       </form>
 
       {sessions?.length === 0 && (
-        <p className="text-gray-500">No sessions yet — create one above.</p>
+        <p className="text-ink/50">No sessions yet — create one above.</p>
       )}
 
       <ul className="flex flex-col gap-2">
@@ -63,12 +63,12 @@ export default async function ClientPage({
           <li key={session.id}>
             <Link
               href={`/facilitator/sessions/${session.id}`}
-              className="flex items-center justify-between rounded border px-4 py-3 hover:bg-gray-50"
+              className="flex items-center justify-between rounded border border-ink/15 px-4 py-3 hover:bg-brand/5"
             >
               <span>{session.name}</span>
               <span
                 className={`text-xs uppercase ${
-                  session.status === "open" ? "text-green-600" : "text-gray-400"
+                  session.status === "open" ? "text-brand" : "text-ink/40"
                 }`}
               >
                 {session.status}

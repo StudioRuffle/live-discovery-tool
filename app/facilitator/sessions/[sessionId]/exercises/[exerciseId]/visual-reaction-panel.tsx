@@ -54,7 +54,7 @@ export function VisualReactionPanel({
   }, [exerciseId]);
 
   if (images.length === 0) {
-    return <p className="text-gray-500">No images uploaded yet.</p>;
+    return <p className="text-white/50">No images uploaded yet.</p>;
   }
 
   const sorted = [...images].sort(
@@ -70,7 +70,7 @@ export function VisualReactionPanel({
         const notes = results?.notes.filter((n) => n.imageId === img.id) ?? [];
 
         return (
-          <div key={img.id} className="flex gap-6 rounded-lg bg-gray-900 p-4">
+          <div key={img.id} className="flex gap-6 rounded-lg bg-black/20 p-4">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={img.url}
@@ -78,7 +78,7 @@ export function VisualReactionPanel({
               className="h-40 w-40 flex-shrink-0 rounded object-cover"
             />
             <div className="flex flex-1 flex-col gap-2">
-              <div className="flex h-10 w-full overflow-hidden rounded-lg bg-gray-800 text-lg font-semibold">
+              <div className="flex h-10 w-full overflow-hidden rounded-lg bg-ink-light text-lg font-semibold">
                 <div
                   className="flex items-center justify-end bg-green-500 pr-3 transition-all duration-500"
                   style={{ width: `${upPct}%` }}
@@ -93,7 +93,7 @@ export function VisualReactionPanel({
                 </div>
               </div>
               {notes.map((n, i) => (
-                <p key={`${n.submittedAt}-${i}`} className="text-sm text-gray-300">
+                <p key={`${n.submittedAt}-${i}`} className="text-sm text-white/70">
                   {n.note}
                 </p>
               ))}

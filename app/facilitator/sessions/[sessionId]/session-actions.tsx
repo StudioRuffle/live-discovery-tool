@@ -84,13 +84,13 @@ export function SessionActions({
   }
 
   return (
-    <div className="flex flex-col gap-3 rounded-lg border p-6">
+    <div className="flex flex-col gap-3 rounded-lg border border-ink/15 p-6">
       <div className="flex flex-wrap gap-2">
         {status === "open" && (
           <button
             onClick={handleClose}
             disabled={closing}
-            className="rounded border px-4 py-2 text-sm font-semibold disabled:opacity-50"
+            className="rounded border border-ink/20 px-4 py-2 text-sm font-semibold text-ink disabled:opacity-50"
           >
             {closing ? "Closing…" : "Close session"}
           </button>
@@ -104,7 +104,7 @@ export function SessionActions({
         </button>
         <button
           onClick={() => setShowDuplicateForm((v) => !v)}
-          className="rounded border px-4 py-2 text-sm font-semibold"
+          className="rounded border border-ink/20 px-4 py-2 text-sm font-semibold text-ink"
         >
           Duplicate session
         </button>
@@ -117,12 +117,12 @@ export function SessionActions({
             value={duplicateName}
             onChange={(e) => setDuplicateName(e.target.value)}
             required
-            className="flex-1 rounded border px-3 py-2"
+            className="flex-1 rounded border border-ink/15 px-3 py-2"
           />
           <select
             value={duplicateClientId}
             onChange={(e) => setDuplicateClientId(e.target.value)}
-            className="rounded border px-3 py-2"
+            className="rounded border border-ink/15 px-3 py-2"
           >
             {clients.map((c) => (
               <option key={c.id} value={c.id}>
@@ -133,7 +133,7 @@ export function SessionActions({
           <button
             type="submit"
             disabled={duplicating}
-            className="rounded bg-black px-4 py-2 font-semibold text-white disabled:opacity-50"
+            className="rounded bg-brand px-4 py-2 font-semibold text-white hover:bg-brand-dark disabled:opacity-50"
           >
             {duplicating ? "Duplicating…" : "Create copy"}
           </button>

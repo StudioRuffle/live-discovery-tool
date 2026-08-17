@@ -98,7 +98,7 @@ export function ImageManager({
         }}
         onClick={() => fileInputRef.current?.click()}
         className={`cursor-pointer rounded-lg border-2 border-dashed p-8 text-center ${
-          dragOver ? "border-black bg-gray-50" : "border-gray-300"
+          dragOver ? "border-brand bg-brand/5" : "border-ink/20"
         }`}
       >
         <input
@@ -109,7 +109,7 @@ export function ImageManager({
           onChange={(e) => handleFiles(e.target.files)}
           className="hidden"
         />
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-ink/50">
           {uploading ? "Uploading…" : "Drag images here, or click to choose files"}
         </p>
       </div>
@@ -118,7 +118,7 @@ export function ImageManager({
       {sorted.length > 0 && (
         <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3">
           {sorted.map((img, i) => (
-            <li key={img.id} className="flex flex-col gap-1 rounded border p-2">
+            <li key={img.id} className="flex flex-col gap-1 rounded border border-ink/15 p-2">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={img.url}

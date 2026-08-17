@@ -9,7 +9,7 @@ export function PerceptualMapForm({ sessionId }: { sessionId: string }) {
   return (
     <form action={createPerceptualMapExercise} className="flex flex-col gap-3">
       <input type="hidden" name="session_id" value={sessionId} />
-      <p className="text-sm font-semibold text-gray-600">Perceptual Map</p>
+      <p className="text-sm font-semibold text-ink/70">Perceptual Map</p>
 
       <div className="flex flex-col gap-2 sm:flex-row">
         <div className="flex flex-1 items-center gap-2">
@@ -18,15 +18,15 @@ export function PerceptualMapForm({ sessionId }: { sessionId: string }) {
             name="x_left"
             placeholder="Legacy"
             required
-            className="w-full rounded border px-3 py-2"
+            className="w-full rounded border border-ink/15 px-3 py-2"
           />
-          <span className="text-gray-400">↔</span>
+          <span className="text-ink/30">↔</span>
           <input
             type="text"
             name="x_right"
             placeholder="Emerging"
             required
-            className="w-full rounded border px-3 py-2"
+            className="w-full rounded border border-ink/15 px-3 py-2"
           />
         </div>
         <div className="flex flex-1 items-center gap-2">
@@ -35,20 +35,20 @@ export function PerceptualMapForm({ sessionId }: { sessionId: string }) {
             name="y_bottom"
             placeholder="Regional"
             required
-            className="w-full rounded border px-3 py-2"
+            className="w-full rounded border border-ink/15 px-3 py-2"
           />
-          <span className="text-gray-400">↕</span>
+          <span className="text-ink/30">↕</span>
           <input
             type="text"
             name="y_top"
             placeholder="National"
             required
-            className="w-full rounded border px-3 py-2"
+            className="w-full rounded border border-ink/15 px-3 py-2"
           />
         </div>
       </div>
 
-      <p className="text-sm font-semibold text-gray-600">Competitors</p>
+      <p className="text-sm font-semibold text-ink/70">Competitors</p>
       {rows.map((row) => (
         <input
           key={row}
@@ -56,20 +56,20 @@ export function PerceptualMapForm({ sessionId }: { sessionId: string }) {
           name="competitor_name"
           placeholder="Competitor name"
           required
-          className="rounded border px-3 py-2"
+          className="rounded border border-ink/15 px-3 py-2"
         />
       ))}
       <button
         type="button"
         onClick={() => setRows((r) => [...r, r.length])}
-        className="self-start text-sm text-blue-600 hover:underline"
+        className="self-start text-sm text-brand hover:underline"
       >
         + Add another competitor
       </button>
 
       <button
         type="submit"
-        className="mt-2 self-start rounded bg-black px-4 py-2 font-semibold text-white"
+        className="mt-2 self-start rounded bg-brand px-4 py-2 font-semibold text-white hover:bg-brand-dark"
       >
         Add exercise
       </button>

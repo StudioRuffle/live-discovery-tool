@@ -64,11 +64,11 @@ export function KeepCutPanel({ exerciseId }: { exerciseId: string }) {
         <p className="text-6xl font-bold">
           {result.submittedCount} of {result.totalAttendees}
         </p>
-        <p className="text-2xl text-gray-400">responded</p>
+        <p className="text-2xl text-white/60">responded</p>
         <button
           onClick={handleReveal}
           disabled={revealing}
-          className="rounded-lg bg-sky-500 px-8 py-4 text-2xl font-bold text-white disabled:opacity-50"
+          className="rounded-lg bg-brand px-8 py-4 text-2xl font-bold text-white hover:bg-brand-dark disabled:opacity-50"
         >
           {revealing ? "Revealing…" : "Reveal"}
         </button>
@@ -78,10 +78,10 @@ export function KeepCutPanel({ exerciseId }: { exerciseId: string }) {
 
   return (
     <div className="mx-auto flex max-w-4xl flex-col gap-4">
-      <p className="text-xl text-gray-400">{result.submittedCount} responses</p>
+      <p className="text-xl text-white/60">{result.submittedCount} responses</p>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         {result.responses?.map((r) => (
-          <div key={r.id} className="rounded-lg bg-gray-900 px-5 py-4">
+          <div key={r.id} className="rounded-lg bg-black/20 px-5 py-4">
             <p className="text-sm font-semibold text-green-400">Keep</p>
             <p className="mb-3 break-words text-xl">{r.keep}</p>
             <p className="text-sm font-semibold text-red-400">Cut</p>

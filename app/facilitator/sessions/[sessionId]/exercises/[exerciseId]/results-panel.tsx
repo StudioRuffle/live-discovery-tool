@@ -60,15 +60,15 @@ export function ResultsPanel({
                 <span>{pair.left}</span>
                 <span>{pair.right}</span>
               </div>
-              <div className="flex h-16 w-full overflow-hidden rounded-lg bg-gray-800 text-2xl font-semibold">
+              <div className="flex h-16 w-full overflow-hidden rounded-lg bg-ink-light text-2xl font-semibold">
                 <div
-                  className="flex items-center justify-end bg-sky-500 pr-3 transition-all duration-500"
+                  className="flex items-center justify-end bg-brand pr-3 text-white transition-all duration-500"
                   style={{ width: `${leftPct}%` }}
                 >
                   {c.left > 0 && c.left}
                 </div>
                 <div
-                  className="flex items-center justify-start bg-amber-500 pl-3 transition-all duration-500"
+                  className="flex items-center justify-start bg-cream pl-3 text-ink transition-all duration-500"
                   style={{ width: `${100 - leftPct}%` }}
                 >
                   {c.right > 0 && c.right}
@@ -80,14 +80,14 @@ export function ResultsPanel({
       </div>
 
       <div className="flex flex-col gap-3">
-        <h2 className="text-2xl font-semibold text-gray-300">Notes</h2>
+        <h2 className="text-2xl font-semibold text-white/70">Notes</h2>
         <div className="flex max-h-96 flex-col-reverse gap-3 overflow-y-auto">
           {results?.notes.map((n, i) => (
             <div
               key={`${n.submittedAt}-${i}`}
-              className="rounded-lg bg-gray-900 px-5 py-3 text-xl"
+              className="rounded-lg bg-black/20 px-5 py-3 text-xl"
             >
-              <span className="mr-2 text-gray-500">
+              <span className="mr-2 text-white/50">
                 {pairsById.current.get(n.pairId)?.left} /{" "}
                 {pairsById.current.get(n.pairId)?.right}:
               </span>
@@ -95,7 +95,7 @@ export function ResultsPanel({
             </div>
           ))}
           {results && results.notes.length === 0 && (
-            <p className="text-gray-500">No notes yet.</p>
+            <p className="text-white/50">No notes yet.</p>
           )}
         </div>
       </div>

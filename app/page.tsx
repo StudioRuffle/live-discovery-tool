@@ -22,7 +22,7 @@ export default async function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center gap-4 p-8 text-center">
       <h1 className="text-3xl font-bold">Live Discovery Session Tool</h1>
-      <p className="text-lg text-gray-500">Phase 0 — scaffold + deploy pipeline</p>
+      <p className="text-lg text-ink/50">Phase 0 — scaffold + deploy pipeline</p>
 
       <div
         className={`mt-6 rounded-lg border px-6 py-4 ${

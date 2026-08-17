@@ -31,14 +31,14 @@ export default async function FacilitatorHome() {
         />
         <button
           type="submit"
-          className="rounded bg-black px-4 py-2 font-semibold text-white"
+          className="rounded bg-brand px-4 py-2 font-semibold text-white hover:bg-brand-dark"
         >
           Add
         </button>
       </form>
 
       {clients?.length === 0 && (
-        <p className="text-gray-500">No clients yet — add one above.</p>
+        <p className="text-ink/50">No clients yet — add one above.</p>
       )}
 
       <ul className="flex flex-col gap-2">
@@ -46,7 +46,7 @@ export default async function FacilitatorHome() {
           <li key={client.id}>
             <Link
               href={`/facilitator/clients/${client.id}`}
-              className="block rounded border px-4 py-3 hover:bg-gray-50"
+              className="block rounded border border-ink/15 px-4 py-3 hover:bg-brand/5"
             >
               {client.name}
             </Link>

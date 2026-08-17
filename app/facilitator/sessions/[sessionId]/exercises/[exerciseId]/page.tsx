@@ -31,8 +31,8 @@ export default async function ExerciseResultsPage({
   if (exercise.type === "visual_reaction") {
     const images = (exercise.config as VisualReactionConfig).images ?? [];
     return (
-      <main className="min-h-screen bg-gray-950 p-8 text-white">
-        <div className="mx-auto mb-8 max-w-5xl rounded-lg bg-white p-6 text-black">
+      <main className="bg-grain min-h-screen bg-ink p-8 text-white">
+        <div className="mx-auto mb-8 max-w-5xl rounded-lg bg-cream p-6 text-ink">
           <h2 className="mb-3 font-semibold">
             Manage images — reorder or remove before the session starts
           </h2>
@@ -44,7 +44,7 @@ export default async function ExerciseResultsPage({
   }
 
   return (
-    <main className="min-h-screen bg-gray-950 p-8 text-white">
+    <main className="bg-grain min-h-screen bg-ink p-8 text-white">
       {isPairExerciseType(exercise.type) ? (
         <ResultsPanel
           exerciseId={exerciseId}
@@ -58,7 +58,7 @@ export default async function ExerciseResultsPage({
           config={exercise.config as PerceptualMapConfig}
         />
       ) : (
-        <p className="text-gray-500">
+        <p className="text-white/50">
           Results view for &quot;{exercise.type}&quot; isn&apos;t built yet.
         </p>
       )}

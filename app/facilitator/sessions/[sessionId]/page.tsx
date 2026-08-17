@@ -46,14 +46,14 @@ export default async function SessionPage({
       <div>
         <Link
           href={`/facilitator/clients/${session.client_id}`}
-          className="text-sm text-gray-500"
+          className="text-sm text-ink/50"
         >
           &larr; {(session as { clients: { name: string } | null }).clients?.name}
         </Link>
         <div className="flex items-center gap-3">
           <h1 className="text-2xl font-bold">{session.name}</h1>
           {!isOpen && (
-            <span className="rounded-full bg-gray-200 px-3 py-1 text-xs font-semibold uppercase text-gray-600">
+            <span className="rounded-full bg-ink/10 px-3 py-1 text-xs font-semibold uppercase text-ink/60">
               Closed — read only
             </span>
           )}
@@ -61,13 +61,13 @@ export default async function SessionPage({
       </div>
 
       {isOpen && qrSvg && (
-        <section className="flex flex-col items-center gap-3 rounded-lg border p-6">
-          <p className="text-sm font-semibold text-gray-600">Attendee join link</p>
+        <section className="flex flex-col items-center gap-3 rounded-lg border border-ink/15 p-6">
+          <p className="text-sm font-semibold text-ink/70">Attendee join link</p>
           <div
             className="h-[320px] w-[320px]"
             dangerouslySetInnerHTML={{ __html: qrSvg }}
           />
-          <a href={joinUrl} className="break-all text-center text-blue-600 underline">
+          <a href={joinUrl} className="break-all text-center text-brand underline">
             {joinUrl}
           </a>
         </section>
@@ -76,18 +76,18 @@ export default async function SessionPage({
       <section className="flex flex-col gap-3">
         <h2 className="font-semibold">Exercises</h2>
         {exercises?.length === 0 && (
-          <p className="text-gray-500">No exercises yet.</p>
+          <p className="text-ink/50">No exercises yet.</p>
         )}
         <ul className="flex flex-col gap-2">
           {(exercises as Exercise[] | null)?.map((exercise) => (
             <li
               key={exercise.id}
-              className="flex items-center justify-between rounded border px-4 py-3"
+              className="flex items-center justify-between rounded border border-ink/15 px-4 py-3"
             >
               <span className="capitalize">{exercise.type.replace(/_/g, " ")}</span>
               <Link
                 href={`/facilitator/sessions/${sessionId}/exercises/${exercise.id}`}
-                className="text-sm font-semibold text-blue-600 hover:underline"
+                className="text-sm font-semibold text-brand hover:underline"
               >
                 {isOpen ? "Run / view results" : "View results"} &rarr;
               </Link>
@@ -106,7 +106,7 @@ export default async function SessionPage({
 
       {isOpen && (
         <>
-          <section className="flex flex-col gap-6 rounded-lg border p-6 sm:flex-row">
+          <section className="flex flex-col gap-6 rounded-lg border border-ink/15 p-6 sm:flex-row">
             <div className="flex-1">
               <PairExerciseForm
                 sessionId={sessionId}
@@ -127,42 +127,42 @@ export default async function SessionPage({
             </div>
           </section>
 
-          <section className="rounded-lg border p-6">
+          <section className="rounded-lg border border-ink/15 p-6">
             <form action={createKeepCutExercise} className="flex flex-col gap-3">
               <input type="hidden" name="session_id" value={sessionId} />
-              <p className="text-sm font-semibold text-gray-600">Keep or Cut</p>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm font-semibold text-ink/70">Keep or Cut</p>
+              <p className="text-sm text-ink/50">
                 No setup needed — attendees answer &quot;one thing you
                 couldn&apos;t lose&quot; and &quot;one thing that needs to
                 go&quot;, hidden until you reveal.
               </p>
               <button
                 type="submit"
-                className="self-start rounded bg-black px-4 py-2 font-semibold text-white"
+                className="self-start rounded bg-brand px-4 py-2 font-semibold text-white hover:bg-brand-dark"
               >
                 Add exercise
               </button>
             </form>
           </section>
 
-          <section className="rounded-lg border p-6">
+          <section className="rounded-lg border border-ink/15 p-6">
             <form action={createVisualReactionExercise} className="flex flex-col gap-3">
               <input type="hidden" name="session_id" value={sessionId} />
-              <p className="text-sm font-semibold text-gray-600">Visual Reaction</p>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm font-semibold text-ink/70">Visual Reaction</p>
+              <p className="text-sm text-ink/50">
                 Creates the exercise — upload reference images afterward from
                 its results page.
               </p>
               <button
                 type="submit"
-                className="self-start rounded bg-black px-4 py-2 font-semibold text-white"
+                className="self-start rounded bg-brand px-4 py-2 font-semibold text-white hover:bg-brand-dark"
               >
                 Add exercise
               </button>
             </form>
           </section>
 
-          <section className="rounded-lg border p-6">
+          <section className="rounded-lg border border-ink/15 p-6">
             <PerceptualMapForm sessionId={sessionId} />
           </section>
         </>
