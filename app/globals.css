@@ -12,13 +12,13 @@
   --color-brand-dark: #e01646; /* hover/active shade of brand */
   --color-ink: #3f0315; /* dark maroon - body text, dark surfaces */
   --color-ink-light: #6b1930; /* lighter maroon tint - borders/secondary on dark */
-  --color-cream: #fdf5f2; /* warm off-white - page background, secondary bar fill */
+  --color-cream: #fdf5f2; /* warm off-white accent - secondary bar fill on DARK screens only, not page backgrounds */
   --font-sans: var(--font-inter);
   --font-display: var(--font-raghero); /* headings/logo - use the `font-display` utility */
 }
 
 body {
-  background: var(--color-cream);
+  background: #ffffff; /* light-page background - plain white, not the cream token (that's reserved for the dark-screen bar accent) */
   color: var(--color-ink);
   font-weight: 300; /* the light weight studioruffle.com uses for body copy */
 }

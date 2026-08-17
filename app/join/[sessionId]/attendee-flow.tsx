@@ -551,7 +551,7 @@ export function AttendeeFlow({
             </div>
             <div
               onClick={handleGridClick}
-              className="relative aspect-square flex-1 rounded-lg border-2 border-ink/15 bg-cream"
+              className="relative aspect-square flex-1 rounded-lg border-2 border-ink/15 bg-white"
             >
               {config.competitors.map((c) => {
                 const p = mapPlacements[c.id];

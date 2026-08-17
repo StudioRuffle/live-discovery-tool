@@ -32,7 +32,7 @@ export default async function ExerciseResultsPage({
     const images = (exercise.config as VisualReactionConfig).images ?? [];
     return (
       <main className="bg-grain min-h-screen bg-ink px-8 pb-8 pt-20 text-white">
-        <div className="mx-auto mb-8 max-w-5xl rounded-lg bg-cream p-6 text-ink">
+        <div className="mx-auto mb-8 max-w-5xl rounded-lg bg-white p-6 text-ink">
           <h2 className="mb-3 font-semibold">
             Manage images — reorder or remove before the session starts
           </h2>

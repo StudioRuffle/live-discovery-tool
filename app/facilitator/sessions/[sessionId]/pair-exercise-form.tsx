@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { createPairExercise } from "../../actions";
 import type { ExerciseType } from "@/lib/types";
 
@@ -19,7 +19,16 @@ export function PairExerciseForm({
   leftPlaceholder: string;
   rightPlaceholder: string;
 }) {
+  const nextId = useRef(1);
   const [rows, setRows] = useState([0]);
+
+  function addRow() {
+    setRows((r) => [...r, nextId.current++]);
+  }
+
+  function removeRow(id: number) {
+    setRows((r) => (r.length > 1 ? r.filter((row) => row !== id) : r));
+  }
 
   return (
     <form action={createPairExercise} className="flex flex-col gap-3">
@@ -44,12 +53,21 @@ export function PairExerciseForm({
             required
             className="min-w-0 flex-1 rounded border border-ink/15 px-3 py-2"
           />
+          <button
+            type="button"
+            onClick={() => removeRow(row)}
+            disabled={rows.length === 1}
+            aria-label="Remove pair"
+            className="shrink-0 rounded px-2 py-2 text-ink/40 hover:text-brand disabled:pointer-events-none disabled:opacity-20"
+          >
+            ✕
+          </button>
         </div>
       ))}
 
       <button
         type="button"
-        onClick={() => setRows((r) => [...r, r.length])}
+        onClick={addRow}
         className="self-start text-sm text-brand hover:underline"
       >
         + Add another pair
