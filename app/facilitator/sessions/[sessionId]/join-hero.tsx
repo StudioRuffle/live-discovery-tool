@@ -26,21 +26,21 @@ export function JoinHero({ joinUrl, qrSvg }: { joinUrl: string; qrSvg: string })
             a narrow phone width - it's one unbreakable word at a font that's
             already wide/bold by design, and this page can be opened on
             anything from a phone to a projector. */}
-        <h2 className="relative whitespace-nowrap text-center font-display text-brand text-[clamp(2rem,10vw,9rem)]">
+        <h2 className="relative whitespace-nowrap text-center font-display text-brand text-[clamp(calc(2rem+20px),calc(10vw+20px),calc(9rem+20px))]">
           Welcome
         </h2>
 
-        <div className="relative mt-0 flex flex-wrap items-start justify-center gap-6 sm:-mt-16 sm:gap-12">
+        <div className="relative mt-[30px] flex flex-wrap items-start justify-center gap-6 sm:-mt-[34px] sm:gap-12">
           <div className="relative aspect-[330/392] w-48 sm:w-64">
             <PanelShape className="absolute inset-0 h-full w-full drop-shadow-xl" />
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="/brand/mobile.png"
               alt=""
-              className="pointer-events-none absolute -top-6 left-1 w-20 select-none sm:-top-7 sm:w-24"
+              className="pointer-events-none absolute -top-6 left-6 w-[88px] select-none sm:-top-7 sm:w-[106px]"
             />
             <div
-              className="absolute left-1/2 top-1 h-24 w-24 -translate-x-1/2 overflow-hidden rounded-lg bg-white p-2 shadow-md [&>svg]:h-full [&>svg]:w-full sm:top-1 sm:h-32 sm:w-32"
+              className="absolute left-1/2 top-1 h-[86px] w-[86px] -translate-x-1/2 overflow-hidden rounded-lg bg-white p-2 shadow-md [&>svg]:h-full [&>svg]:w-full sm:h-[115px] sm:w-[115px]"
               dangerouslySetInnerHTML={{ __html: qrSvg }}
             />
             <p className="absolute inset-x-4 bottom-16 text-center text-xl font-light leading-tight text-ink sm:bottom-24 sm:text-3xl">
