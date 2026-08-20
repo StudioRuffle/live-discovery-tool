@@ -21,7 +21,7 @@ export function JoinHero({ joinUrl, qrSvg }: { joinUrl: string; qrSvg: string })
         className="pointer-events-none absolute -right-2 -top-4 w-14 select-none sm:-right-6 sm:-top-10 sm:w-28"
       />
 
-      <div className="relative px-4 pt-10 sm:px-10 sm:pt-16">
+      <div className="relative px-4 pt-[20px] sm:px-10 sm:pt-[44px]">
         {/* Fluid size (not a discrete Tailwind step) so this never overflows
             a narrow phone width - it's one unbreakable word at a font that's
             already wide/bold by design, and this page can be opened on
@@ -31,7 +31,7 @@ export function JoinHero({ joinUrl, qrSvg }: { joinUrl: string; qrSvg: string })
         </h2>
 
         <div className="relative mt-[30px] flex flex-wrap items-start justify-center gap-6 sm:-mt-[34px] sm:gap-12">
-          <div className="relative aspect-[330/392] w-48 sm:w-64">
+          <div className="relative aspect-[330/392] w-48 sm:w-64" style={{ zoom: 0.9 }}>
             <PanelShape className="absolute inset-0 h-full w-full drop-shadow-xl" />
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
@@ -54,6 +54,7 @@ export function JoinHero({ joinUrl, qrSvg }: { joinUrl: string; qrSvg: string })
           <a
             href={joinUrl}
             className="relative aspect-[330/392] w-48 transition-transform hover:-translate-y-1 sm:w-64"
+            style={{ zoom: 0.9 }}
           >
             <PanelShape className="absolute inset-0 h-full w-full drop-shadow-xl" />
             {/* eslint-disable-next-line @next/next/no-img-element */}
