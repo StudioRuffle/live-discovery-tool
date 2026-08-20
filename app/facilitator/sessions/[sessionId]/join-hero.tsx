@@ -30,7 +30,7 @@ export function JoinHero({ joinUrl, qrSvg }: { joinUrl: string; qrSvg: string })
           Welcome
         </h2>
 
-        <div className="relative mt-8 flex flex-wrap items-start justify-center gap-6 sm:mt-14 sm:gap-12">
+        <div className="relative mt-0 flex flex-wrap items-start justify-center gap-6 sm:-mt-16 sm:gap-12">
           <div className="relative aspect-[330/392] w-48 sm:w-64">
             <PanelShape className="absolute inset-0 h-full w-full drop-shadow-xl" />
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -43,8 +43,10 @@ export function JoinHero({ joinUrl, qrSvg }: { joinUrl: string; qrSvg: string })
               className="absolute left-1/2 top-1 h-24 w-24 -translate-x-1/2 overflow-hidden rounded-lg bg-white p-2 shadow-md [&>svg]:h-full [&>svg]:w-full sm:top-1 sm:h-32 sm:w-32"
               dangerouslySetInnerHTML={{ __html: qrSvg }}
             />
-            <p className="absolute inset-x-4 bottom-16 text-center text-lg font-light leading-tight text-ink sm:bottom-24 sm:text-2xl">
-              Scan me if using a mobile
+            <p className="absolute inset-x-4 bottom-16 text-center text-xl font-light leading-tight text-ink sm:bottom-24 sm:text-3xl">
+              Scan me if
+              <br />
+              using a mobile
             </p>
             <ArrowIcon className="absolute bottom-6 left-1/2 w-16 -translate-x-1/2 text-ink sm:bottom-8 sm:w-20" />
           </div>
@@ -60,8 +62,10 @@ export function JoinHero({ joinUrl, qrSvg }: { joinUrl: string; qrSvg: string })
               alt=""
               className="pointer-events-none absolute left-1/2 -top-10 w-32 -translate-x-1/2 select-none sm:-top-12 sm:w-40"
             />
-            <p className="absolute inset-x-4 bottom-16 text-center text-lg font-light leading-tight text-ink sm:bottom-24 sm:text-2xl">
-              Click me if using a laptop
+            <p className="absolute inset-x-4 bottom-16 text-center text-xl font-light leading-tight text-ink sm:bottom-24 sm:text-3xl">
+              Click me if
+              <br />
+              using a laptop
             </p>
             <ArrowIcon className="absolute bottom-6 left-1/2 w-16 -translate-x-1/2 text-ink sm:bottom-8 sm:w-20" />
           </a>
