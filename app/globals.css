@@ -26,10 +26,10 @@ body {
 /* Subtle grain texture for brand surfaces (dark result screens etc.) -
  * echoes the noise texture on studioruffle.com's hero. Kept deliberately
  * faint (0.05 opacity) per "subtle" - bump the opacity if it should read
- * more strongly. */
-.bg-grain {
-  position: relative;
-}
+ * more strongly. Doesn't set its own `position` - the caller must be
+ * `relative`/`absolute`/etc. already (Tailwind utilities on the element
+ * win the cascade over a plain rule here, so a hardcoded `position` on
+ * this class would silently fight an `absolute` on the same element). */
 .bg-grain::before {
   content: "";
   position: absolute;
