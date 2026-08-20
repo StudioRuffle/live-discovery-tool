@@ -37,13 +37,13 @@ export function JoinHero({ joinUrl, qrSvg }: { joinUrl: string; qrSvg: string })
             <img
               src="/brand/mobile.png"
               alt=""
-              className="pointer-events-none absolute -top-8 left-1 w-20 select-none sm:-top-9 sm:w-24"
+              className="pointer-events-none absolute -top-6 left-1 w-20 select-none sm:-top-7 sm:w-24"
             />
             <div
-              className="absolute left-1/2 top-7 h-24 w-24 -translate-x-1/2 overflow-hidden rounded-lg bg-white p-2 shadow-md [&>svg]:h-full [&>svg]:w-full sm:top-9 sm:h-32 sm:w-32"
+              className="absolute left-1/2 top-1 h-24 w-24 -translate-x-1/2 overflow-hidden rounded-lg bg-white p-2 shadow-md [&>svg]:h-full [&>svg]:w-full sm:top-1 sm:h-32 sm:w-32"
               dangerouslySetInnerHTML={{ __html: qrSvg }}
             />
-            <p className="absolute inset-x-4 bottom-12 text-center text-lg font-light leading-tight text-ink sm:bottom-16 sm:text-2xl">
+            <p className="absolute inset-x-4 bottom-16 text-center text-lg font-light leading-tight text-ink sm:bottom-24 sm:text-2xl">
               Scan me if using a mobile
             </p>
             <ArrowIcon className="absolute bottom-6 left-1/2 w-16 -translate-x-1/2 text-ink sm:bottom-8 sm:w-20" />
@@ -60,7 +60,7 @@ export function JoinHero({ joinUrl, qrSvg }: { joinUrl: string; qrSvg: string })
               alt=""
               className="pointer-events-none absolute left-1/2 -top-10 w-32 -translate-x-1/2 select-none sm:-top-12 sm:w-40"
             />
-            <p className="absolute inset-x-4 bottom-12 text-center text-lg font-light leading-tight text-ink sm:bottom-16 sm:text-2xl">
+            <p className="absolute inset-x-4 bottom-16 text-center text-lg font-light leading-tight text-ink sm:bottom-24 sm:text-2xl">
               Click me if using a laptop
             </p>
             <ArrowIcon className="absolute bottom-6 left-1/2 w-16 -translate-x-1/2 text-ink sm:bottom-8 sm:w-20" />
