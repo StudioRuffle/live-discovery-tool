@@ -41,6 +41,7 @@ export default async function SessionPage({
   const isOpen = session.status === "open";
   const siteUrl = await getSiteUrl();
   const joinUrl = `${siteUrl}/join/${sessionId}`;
+  const presentUrl = `${siteUrl}/present/${sessionId}`;
   const qrSvg = isOpen ? await generateQrSvg(joinUrl) : null;
 
   return (
@@ -61,6 +62,25 @@ export default async function SessionPage({
           )}
         </div>
       </div>
+
+      {isOpen && (
+        <div className="flex items-center justify-between gap-4 rounded-lg border border-ink/15 px-4 py-3">
+          <div className="min-w-0">
+            <p className="text-sm font-semibold text-ink/70">
+              Presentation link — no PIN needed, safe to share or project
+            </p>
+            <p className="truncate text-sm text-ink/50">{presentUrl}</p>
+          </div>
+          <a
+            href={presentUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="shrink-0 text-sm font-semibold text-brand hover:underline"
+          >
+            Open &#8599;
+          </a>
+        </div>
+      )}
 
       {isOpen && qrSvg && <JoinHero joinUrl={joinUrl} qrSvg={qrSvg} />}
 
