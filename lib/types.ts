@@ -3,7 +3,8 @@ export type ExerciseType =
   | "word_choice"
   | "keep_cut"
   | "visual_reaction"
-  | "perceptual_map";
+  | "perceptual_map"
+  | "priority_ranking";
 
 export type SessionStatus = "open" | "closed";
 export type RevealState = "hidden" | "revealed";
@@ -73,6 +74,21 @@ export interface Placement {
 
 export interface PerceptualMapResponsePayload {
   placements: Placement[];
+}
+
+export interface RankItem {
+  id: string;
+  label: string;
+}
+
+export interface PriorityRankingConfig {
+  items: RankItem[];
+}
+
+// order[0] is the attendee's top priority, order[length-1] their last -
+// one row per attendee for the whole exercise, same as perceptual_map.
+export interface PriorityRankingResponsePayload {
+  order: string[];
 }
 
 export interface Client {

@@ -38,6 +38,7 @@ export default async function JoinPage({
       "keep_cut",
       "visual_reaction",
       "perceptual_map",
+      "priority_ranking",
     ])
     .order("position", { ascending: true });
 

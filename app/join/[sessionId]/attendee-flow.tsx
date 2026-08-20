@@ -10,8 +10,20 @@ import {
   type PairExerciseConfig,
   type PerceptualMapConfig,
   type Placement,
+  type PriorityRankingConfig,
   type VisualReactionConfig,
 } from "@/lib/types";
+
+// Fisher-Yates - avoids the config's authored order biasing every
+// attendee's starting ranking the same way.
+function shuffled<T>(arr: T[]): T[] {
+  const copy = [...arr];
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
 
 interface StoredAttendee {
   id: string;
@@ -102,6 +114,7 @@ export function AttendeeFlow({
     {}
   );
   const [activeCompetitorId, setActiveCompetitorId] = useState<string | null>(null);
+  const [rankOrder, setRankOrder] = useState<string[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
@@ -158,6 +171,24 @@ export function AttendeeFlow({
     const submitted = progress[currentExercise.id] ?? [];
     return config.images.find((img) => !submitted.includes(img.id)) ?? null;
   }, [currentExercise, progress]);
+
+  useEffect(() => {
+    if (currentExercise?.type === "priority_ranking") {
+      const config = currentExercise.config as PriorityRankingConfig;
+      setRankOrder(shuffled(config.items.map((i) => i.id)));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentExercise?.id]);
+
+  function moveRankItem(index: number, direction: -1 | 1) {
+    setRankOrder((prev) => {
+      const swapWith = index + direction;
+      if (swapWith < 0 || swapWith >= prev.length) return prev;
+      const next = [...prev];
+      [next[index], next[swapWith]] = [next[swapWith], next[index]];
+      return next;
+    });
+  }
 
   function recordSubmission(exerciseId: string, itemId: string) {
     const next: Progress = {
@@ -292,6 +323,28 @@ export function AttendeeFlow({
     }
   }
 
+  async function handleRankingSubmit() {
+    if (!attendee || !currentExercise || rankOrder.length === 0) return;
+
+    setSubmitting(true);
+    setSubmitError(null);
+
+    try {
+      await submitWithRetry(supabase, "responses", {
+        exercise_id: currentExercise.id,
+        attendee_id: attendee.id,
+        payload: { order: rankOrder },
+      });
+
+      recordSubmission(currentExercise.id, SINGLE_SUBMISSION_ITEM_ID);
+      setJustFinishedExerciseId(currentExercise.id);
+    } catch {
+      setSubmitError("Couldn't submit — check your connection and try again.");
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
   if (attendee === undefined) return null;
 
   if (!attendee) {
@@ -361,6 +414,20 @@ export function AttendeeFlow({
       return (
         <main className="flex min-h-screen flex-col items-center justify-center gap-6 p-8 text-center">
           <h1 className="font-display text-3xl">Thanks — placements recorded</h1>
+          <button
+            onClick={() => setJustFinishedExerciseId(null)}
+            className="rounded bg-brand px-6 py-3 text-lg font-semibold text-white hover:bg-brand-dark"
+          >
+            {hasMore ? "Continue" : "Done"}
+          </button>
+        </main>
+      );
+    }
+
+    if (justFinishedExercise.type === "priority_ranking") {
+      return (
+        <main className="flex min-h-screen flex-col items-center justify-center gap-6 p-8 text-center">
+          <h1 className="font-display text-3xl">Thanks — ranking recorded</h1>
           <button
             onClick={() => setJustFinishedExerciseId(null)}
             className="rounded bg-brand px-6 py-3 text-lg font-semibold text-white hover:bg-brand-dark"
@@ -613,6 +680,75 @@ export function AttendeeFlow({
             <p className="text-sm text-red-600">
               {submitError}{" "}
               <button onClick={handleMapSubmit} className="underline">
+                Retry
+              </button>
+            </p>
+          )}
+        </div>
+      </main>
+    );
+  }
+
+  if (currentExercise.type === "priority_ranking") {
+    const config = currentExercise.config as PriorityRankingConfig;
+    const itemsById = new Map(config.items.map((item) => [item.id, item]));
+
+    return (
+      <main className="flex min-h-screen flex-col items-center justify-center gap-6 p-6">
+        <div className="flex w-full max-w-md flex-col gap-4">
+          <p className="text-center text-sm text-ink/50">
+            Use the arrows to put these in order — most important at the top.
+          </p>
+          <ol className="flex flex-col gap-2">
+            {rankOrder.map((id, index) => {
+              const item = itemsById.get(id);
+              if (!item) return null;
+              return (
+                <li
+                  key={id}
+                  className="flex items-center gap-3 rounded-xl border-2 border-ink/15 px-4 py-3"
+                >
+                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-ink/10 text-sm font-bold">
+                    {index + 1}
+                  </span>
+                  <span className="min-w-0 flex-1 text-lg font-semibold">
+                    {item.label}
+                  </span>
+                  <div className="flex shrink-0 flex-col">
+                    <button
+                      type="button"
+                      onClick={() => moveRankItem(index, -1)}
+                      disabled={index === 0}
+                      aria-label="Move up"
+                      className="px-2 py-1 text-xl leading-none text-ink/50 hover:text-brand disabled:opacity-20"
+                    >
+                      ▲
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => moveRankItem(index, 1)}
+                      disabled={index === rankOrder.length - 1}
+                      aria-label="Move down"
+                      className="px-2 py-1 text-xl leading-none text-ink/50 hover:text-brand disabled:opacity-20"
+                    >
+                      ▼
+                    </button>
+                  </div>
+                </li>
+              );
+            })}
+          </ol>
+          <button
+            onClick={handleRankingSubmit}
+            disabled={submitting || rankOrder.length === 0}
+            className="rounded bg-brand px-4 py-4 text-xl font-semibold text-white hover:bg-brand-dark disabled:opacity-50"
+          >
+            {submitting ? "Submitting…" : "Submit ranking"}
+          </button>
+          {submitError && (
+            <p className="text-sm text-red-600">
+              {submitError}{" "}
+              <button onClick={handleRankingSubmit} className="underline">
                 Retry
               </button>
             </p>

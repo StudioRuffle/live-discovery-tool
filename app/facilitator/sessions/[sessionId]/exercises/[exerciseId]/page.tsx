@@ -4,6 +4,7 @@ import {
   isPairExerciseType,
   type PairExerciseConfig,
   type PerceptualMapConfig,
+  type PriorityRankingConfig,
   type VisualReactionConfig,
 } from "@/lib/types";
 import { ResultsPanel } from "./results-panel";
@@ -11,6 +12,7 @@ import { KeepCutPanel } from "./keep-cut-panel";
 import { ImageManager } from "./image-manager";
 import { VisualReactionPanel } from "./visual-reaction-panel";
 import { PerceptualMapPanel } from "./perceptual-map-panel";
+import { PriorityRankingPanel } from "./priority-ranking-panel";
 
 export default async function ExerciseResultsPage({
   params,
@@ -56,6 +58,11 @@ export default async function ExerciseResultsPage({
         <PerceptualMapPanel
           exerciseId={exerciseId}
           config={exercise.config as PerceptualMapConfig}
+        />
+      ) : exercise.type === "priority_ranking" ? (
+        <PriorityRankingPanel
+          exerciseId={exerciseId}
+          config={exercise.config as PriorityRankingConfig}
         />
       ) : (
         <p className="text-white/50">

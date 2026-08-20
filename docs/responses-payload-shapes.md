@@ -91,3 +91,23 @@ is `''`)
 }
 ```
 `x`/`y` are normalized `0..1` within the axis bounds, not pixel coordinates.
+
+## `priority_ranking`
+
+**config**
+```json
+{
+  "items": [{ "id": "i1", "label": "Speed to market" }]
+}
+```
+
+**payload** (one row per attendee for the whole exercise - the attendee's
+full ranking submitted together, so again no `pairId`/`imageId` and
+`item_key` is `''`)
+```json
+{ "order": ["i1", "i3", "i2"] }
+```
+`order` is every item id, most important first. Results are scored as a
+Borda count: within one respondent's ranking of `n` items, the item at
+index `i` earns `n - i` points, summed across respondents (see
+`/api/facilitator/priority-ranking-results/[exerciseId]`).

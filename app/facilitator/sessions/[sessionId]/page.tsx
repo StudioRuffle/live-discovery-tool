@@ -6,6 +6,7 @@ import { getSiteUrl } from "@/lib/site-url";
 import type { Client, Exercise } from "@/lib/types";
 import { PairExerciseForm } from "./pair-exercise-form";
 import { PerceptualMapForm } from "./perceptual-map-form";
+import { PriorityRankingForm } from "./priority-ranking-form";
 import { SessionActions } from "./session-actions";
 import { DeleteExerciseButton } from "./delete-exercise-button";
 import { JoinHero } from "./join-hero";
@@ -181,6 +182,10 @@ export default async function SessionPage({
 
             <section className="rounded-lg border border-ink/15 p-6">
               <PerceptualMapForm sessionId={sessionId} />
+            </section>
+
+            <section className="rounded-lg border border-ink/15 p-6">
+              <PriorityRankingForm sessionId={sessionId} />
             </section>
           </>
         )}

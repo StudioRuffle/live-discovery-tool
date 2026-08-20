@@ -10,6 +10,7 @@ import type {
   ExerciseType,
   ImageItem,
   Pair,
+  RankItem,
   VisualReactionConfig,
 } from "@/lib/types";
 
@@ -201,6 +202,34 @@ export async function createPerceptualMapExercise(formData: FormData) {
       yAxis: { bottom: yBottom, top: yTop },
       competitors,
     },
+  });
+  if (error) throw new Error(error.message);
+
+  revalidatePath(`/facilitator/sessions/${sessionId}`);
+}
+
+export async function createPriorityRankingExercise(formData: FormData) {
+  await requireFacilitator();
+  const sessionId = String(formData.get("session_id") ?? "");
+  const labels = (formData.getAll("item_label") as string[])
+    .map((l) => l.trim())
+    .filter(Boolean);
+
+  if (!sessionId || labels.length < 2) return;
+
+  const items: RankItem[] = labels.map((label) => ({
+    id: crypto.randomUUID(),
+    label,
+  }));
+
+  const supabase = createAdminClient();
+  const nextPosition = await nextExercisePosition(supabase, sessionId);
+
+  const { error } = await supabase.from("exercises").insert({
+    session_id: sessionId,
+    type: "priority_ranking",
+    position: nextPosition,
+    config: { items },
   });
   if (error) throw new Error(error.message);
 
