@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { createPublicClient } from "@/lib/supabase/public";
 import type { Exercise } from "@/lib/types";
 import { QuestionnaireFlow } from "./questionnaire-flow";
+
+// See app/join/[sessionId]/page.tsx for why this is here.
+export const revalidate = 30;
 
 export async function generateMetadata({
   params,
@@ -10,7 +13,7 @@ export async function generateMetadata({
   params: Promise<{ sessionId: string }>;
 }): Promise<Metadata> {
   const { sessionId } = await params;
-  const supabase = await createClient();
+  const supabase = createPublicClient();
   const { data: session } = await supabase
     .from("sessions")
     .select("name")
@@ -21,10 +24,23 @@ export async function generateMetadata({
 
   const title = `${session.name} — A few questions before we meet`;
   const description = "A couple of quick questions to help us prepare.";
+  const url = `https://live-discovery-tool.netlify.app/questionnaire/${sessionId}`;
   return {
     title,
     description,
-    openGraph: { title, description, images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "Studio Ruffle" }] },
+    // og:type and og:url are two of the four REQUIRED properties per the
+    // Open Graph spec (ogp.me) - some crawlers (Google's in particular)
+    // decline to render a rich card at all without them, even with a
+    // valid title/image present. Both were silently missing here because
+    // setting our own `openGraph` object at this route replaces the root
+    // layout's (which had `type`) rather than merging with it.
+    openGraph: {
+      title,
+      description,
+      url,
+      type: "website",
+      images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "Studio Ruffle" }],
+    },
     twitter: { title, description, images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "Studio Ruffle" }] },
   };
 }
@@ -39,7 +55,7 @@ export default async function QuestionnairePage({
   params: Promise<{ sessionId: string }>;
 }) {
   const { sessionId } = await params;
-  const supabase = await createClient();
+  const supabase = createPublicClient();
 
   const { data: session } = await supabase
     .from("sessions")
