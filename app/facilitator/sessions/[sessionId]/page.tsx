@@ -11,6 +11,7 @@ import { QuestionnaireForm } from "./questionnaire-form";
 import { SessionActions } from "./session-actions";
 import { DeleteExerciseButton } from "./delete-exercise-button";
 import { JoinHero } from "./join-hero";
+import { CopyEmailButton } from "./copy-email-button";
 import { createKeepCutExercise, createVisualReactionExercise } from "../../actions";
 
 export default async function SessionPage({
@@ -78,14 +79,21 @@ export default async function SessionPage({
             </p>
             <p className="truncate text-sm text-ink/50">{questionnaireUrl}</p>
           </div>
-          <a
-            href={questionnaireUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="shrink-0 text-sm font-semibold text-brand hover:underline"
-          >
-            Open &#8599;
-          </a>
+          <div className="flex shrink-0 items-center gap-4">
+            <CopyEmailButton
+              url={questionnaireUrl}
+              kind="questionnaire"
+              alt="A few questions before we meet"
+            />
+            <a
+              href={questionnaireUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm font-semibold text-brand hover:underline"
+            >
+              Open &#8599;
+            </a>
+          </div>
         </div>
       )}
 
@@ -97,14 +105,17 @@ export default async function SessionPage({
             </p>
             <p className="truncate text-sm text-ink/50">{presentUrl}</p>
           </div>
-          <a
-            href={presentUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="shrink-0 text-sm font-semibold text-brand hover:underline"
-          >
-            Open &#8599;
-          </a>
+          <div className="flex shrink-0 items-center gap-4">
+            <CopyEmailButton url={presentUrl} kind="present" alt="Welcome to the session" />
+            <a
+              href={presentUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm font-semibold text-brand hover:underline"
+            >
+              Open &#8599;
+            </a>
+          </div>
         </div>
       )}
 
