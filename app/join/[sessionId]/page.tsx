@@ -1,7 +1,36 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import type { Exercise } from "@/lib/types";
 import { AttendeeFlow } from "./attendee-flow";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ sessionId: string }>;
+}): Promise<Metadata> {
+  const { sessionId } = await params;
+  const supabase = await createClient();
+  const { data: session } = await supabase
+    .from("sessions")
+    .select("name")
+    .eq("id", sessionId)
+    .single();
+
+  if (!session) return {};
+
+  const title = `${session.name} — Join the session`;
+  const description = "Scan or tap to join in on your phone or laptop.";
+  return {
+    title,
+    description,
+    // Setting our own openGraph/twitter here overrides (doesn't merge
+    // with) the root layout's, including its file-convention-based
+    // og:image - so the shared image has to be re-referenced explicitly.
+    openGraph: { title, description, images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "Studio Ruffle" }] },
+    twitter: { title, description, images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "Studio Ruffle" }] },
+  };
+}
 
 export default async function JoinPage({
   params,
