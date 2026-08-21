@@ -56,8 +56,9 @@ export async function GET(
 ) {
   const { kind } = await params;
   const subtitle = SUBTITLES[kind] ?? SUBTITLES.questionnaire;
+  const cta = "Click me";
 
-  const interLight = await loadGoogleFont("Inter", 300, subtitle);
+  const interLight = await loadGoogleFont("Inter", 300, `${subtitle}${cta}`);
 
   return new ImageResponse(
     (
@@ -102,6 +103,32 @@ export async function GET(
             }}
           >
             {subtitle}
+          </div>
+
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 16,
+              marginTop: 16,
+              padding: "16px 32px",
+              border: "2px solid #ffffff",
+              borderRadius: 16,
+            }}
+          >
+            <div
+              style={{
+                fontSize: 32,
+                fontWeight: 300,
+                fontFamily: "Inter",
+                color: "#ffffff",
+              }}
+            >
+              {cta}
+            </div>
+            <svg width={72} height={10} viewBox="0 0 110 15" fill="#ffffff">
+              <path d="M109.581 8.07137C109.971 7.68085 109.971 7.04768 109.581 6.65716L103.217 0.293199C102.826 -0.0973254 102.193 -0.0973255 101.802 0.293199C101.412 0.683723 101.412 1.31689 101.802 1.70741L107.459 7.36427L101.802 13.0211C101.412 13.4116 101.412 14.0448 101.802 14.4353C102.193 14.8259 102.826 14.8259 103.217 14.4353L109.581 8.07137ZM0 7.36426L-8.74228e-08 8.36426L108.874 8.36427L108.874 7.36427L108.874 6.36427L8.74228e-08 6.36426L0 7.36426Z" />
+            </svg>
           </div>
         </div>
       </div>
