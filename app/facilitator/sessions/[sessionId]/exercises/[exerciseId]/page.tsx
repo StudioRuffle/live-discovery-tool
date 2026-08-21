@@ -5,6 +5,7 @@ import {
   type PairExerciseConfig,
   type PerceptualMapConfig,
   type PriorityRankingConfig,
+  type QuestionnaireConfig,
   type VisualReactionConfig,
 } from "@/lib/types";
 import { ResultsPanel } from "./results-panel";
@@ -13,6 +14,7 @@ import { ImageManager } from "./image-manager";
 import { VisualReactionPanel } from "./visual-reaction-panel";
 import { PerceptualMapPanel } from "./perceptual-map-panel";
 import { PriorityRankingPanel } from "./priority-ranking-panel";
+import { QuestionnairePanel } from "./questionnaire-panel";
 
 export default async function ExerciseResultsPage({
   params,
@@ -63,6 +65,11 @@ export default async function ExerciseResultsPage({
         <PriorityRankingPanel
           exerciseId={exerciseId}
           config={exercise.config as PriorityRankingConfig}
+        />
+      ) : exercise.type === "questionnaire" ? (
+        <QuestionnairePanel
+          exerciseId={exerciseId}
+          config={exercise.config as QuestionnaireConfig}
         />
       ) : (
         <p className="text-white/50">

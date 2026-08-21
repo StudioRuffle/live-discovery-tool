@@ -111,3 +111,33 @@ full ranking submitted together, so again no `pairId`/`imageId` and
 Borda count: within one respondent's ranking of `n` items, the item at
 index `i` earns `n - i` points, summed across respondents (see
 `/api/facilitator/priority-ranking-results/[exerciseId]`).
+
+## `questionnaire`
+
+Pre-session intake, not a live in-room exercise - see
+`isPreSessionType()` in `lib/types.ts`. Answered via its own public
+`/questionnaire/[sessionId]` link instead of `/join/[sessionId]`'s
+sequential exercise queue, any time before the session (no reveal-state
+gating; the facilitator reads responses whenever they like).
+
+**config**
+```json
+{
+  "questions": [{ "id": "q1", "text": "What does success look like for this project?" }]
+}
+```
+
+**payload** (one row per respondent for the whole exercise - all answers
+submitted together, so again no `pairId`/`imageId` and `item_key` is `''`)
+```json
+{
+  "answers": [
+    { "questionId": "q1", "text": "Free-text answer" }
+  ]
+}
+```
+
+Unlike every other exercise type, results are shown by respondent name
+(via `attendees.name`, joined in
+`/api/facilitator/questionnaire-results/[exerciseId]`) rather than kept
+anonymous - the point of pre-session intake is knowing who said what.

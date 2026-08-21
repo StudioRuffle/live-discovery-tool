@@ -3,10 +3,11 @@ import { notFound } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { generateQrSvg } from "@/lib/qr";
 import { getSiteUrl } from "@/lib/site-url";
-import type { Client, Exercise } from "@/lib/types";
+import { isPreSessionType, type Client, type Exercise } from "@/lib/types";
 import { PairExerciseForm } from "./pair-exercise-form";
 import { PerceptualMapForm } from "./perceptual-map-form";
 import { PriorityRankingForm } from "./priority-ranking-form";
+import { QuestionnaireForm } from "./questionnaire-form";
 import { SessionActions } from "./session-actions";
 import { DeleteExerciseButton } from "./delete-exercise-button";
 import { JoinHero } from "./join-hero";
@@ -43,6 +44,10 @@ export default async function SessionPage({
   const siteUrl = await getSiteUrl();
   const joinUrl = `${siteUrl}/join/${sessionId}`;
   const presentUrl = `${siteUrl}/present/${sessionId}`;
+  const questionnaireUrl = `${siteUrl}/questionnaire/${sessionId}`;
+  const hasQuestionnaire = ((exercises as Exercise[] | null) ?? []).some((e) =>
+    isPreSessionType(e.type)
+  );
   const qrSvg = isOpen ? await generateQrSvg(joinUrl) : null;
 
   return (
@@ -63,6 +68,26 @@ export default async function SessionPage({
           )}
         </div>
       </div>
+
+      {isOpen && hasQuestionnaire && (
+        <div className="flex items-center justify-between gap-4 rounded-lg border border-ink/15 px-4 py-3">
+          <div className="min-w-0">
+            <p className="text-sm font-semibold text-ink/70">
+              Pre-session questionnaire link — send this before the day, no
+              PIN needed
+            </p>
+            <p className="truncate text-sm text-ink/50">{questionnaireUrl}</p>
+          </div>
+          <a
+            href={questionnaireUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="shrink-0 text-sm font-semibold text-brand hover:underline"
+          >
+            Open &#8599;
+          </a>
+        </div>
+      )}
 
       {isOpen && (
         <div className="flex items-center justify-between gap-4 rounded-lg border border-ink/15 px-4 py-3">
@@ -186,6 +211,10 @@ export default async function SessionPage({
 
             <section className="rounded-lg border border-ink/15 p-6">
               <PriorityRankingForm sessionId={sessionId} />
+            </section>
+
+            <section className="rounded-lg border border-ink/15 p-6">
+              <QuestionnaireForm sessionId={sessionId} />
             </section>
           </>
         )}

@@ -4,7 +4,14 @@ export type ExerciseType =
   | "keep_cut"
   | "visual_reaction"
   | "perceptual_map"
-  | "priority_ranking";
+  | "priority_ranking"
+  | "questionnaire";
+
+// Exercise types answered async, before the session, via their own public
+// link - excluded from /join/[sessionId]'s live in-room exercise queue.
+export function isPreSessionType(type: ExerciseType): boolean {
+  return type === "questionnaire";
+}
 
 export type SessionStatus = "open" | "closed";
 export type RevealState = "hidden" | "revealed";
@@ -89,6 +96,26 @@ export interface PriorityRankingConfig {
 // one row per attendee for the whole exercise, same as perceptual_map.
 export interface PriorityRankingResponsePayload {
   order: string[];
+}
+
+export interface QuestionnaireQuestion {
+  id: string;
+  text: string;
+}
+
+export interface QuestionnaireConfig {
+  questions: QuestionnaireQuestion[];
+}
+
+export interface QuestionnaireAnswer {
+  questionId: string;
+  text: string;
+}
+
+// One row per respondent for the whole exercise, same shape as
+// perceptual_map/priority_ranking - item_key is ''.
+export interface QuestionnaireResponsePayload {
+  answers: QuestionnaireAnswer[];
 }
 
 export interface Client {

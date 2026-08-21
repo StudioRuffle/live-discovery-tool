@@ -10,6 +10,7 @@ import type {
   ExerciseType,
   ImageItem,
   Pair,
+  QuestionnaireQuestion,
   RankItem,
   VisualReactionConfig,
 } from "@/lib/types";
@@ -230,6 +231,34 @@ export async function createPriorityRankingExercise(formData: FormData) {
     type: "priority_ranking",
     position: nextPosition,
     config: { items },
+  });
+  if (error) throw new Error(error.message);
+
+  revalidatePath(`/facilitator/sessions/${sessionId}`);
+}
+
+export async function createQuestionnaireExercise(formData: FormData) {
+  await requireFacilitator();
+  const sessionId = String(formData.get("session_id") ?? "");
+  const texts = (formData.getAll("question_text") as string[])
+    .map((t) => t.trim())
+    .filter(Boolean);
+
+  if (!sessionId || texts.length === 0) return;
+
+  const questions: QuestionnaireQuestion[] = texts.map((text) => ({
+    id: crypto.randomUUID(),
+    text,
+  }));
+
+  const supabase = createAdminClient();
+  const nextPosition = await nextExercisePosition(supabase, sessionId);
+
+  const { error } = await supabase.from("exercises").insert({
+    session_id: sessionId,
+    type: "questionnaire",
+    position: nextPosition,
+    config: { questions },
   });
   if (error) throw new Error(error.message);
 
